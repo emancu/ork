@@ -9,10 +9,10 @@ services:
 before_install:
   - gem install dep
   - "if [[ -x /tmp/.riaktest/bin/riak ]]; then /tmp/.riaktest/bin/riak stop; rm -rf /tmp/.riaktest; fi"
-  - ! 'echo "root = '/tmp/.riaktest'" > test/test_riak_server.toml'
-  - ! 'echo "min_port = 15000" > test/test_riak_server.toml'
-  - ! 'echo "source = '/usr/sbin'" >> test/test_riak_server.toml'
-  - "ulimit -n 4096"
+  - ! 'echo root = \"/tmp/.riaktest\" > test/test_riak_server.toml'
+  - ! 'echo min_port = 15000 >> test/test_riak_server.toml'
+  - ! 'echo source = \"/usr/sbin\" >> test/test_riak_server.toml'
+  - ulimit -n 4096
 
 install:
   - dep install
