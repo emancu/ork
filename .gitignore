@@ -1,2 +1,3 @@
 test/test_riak_server.toml
 coverage/*
+ork-*.gem
