@@ -39,5 +39,3 @@ end
 def flush_db!
   test_server.drop
 end
-
-test_server.start

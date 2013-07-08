@@ -2,8 +2,30 @@ require "rake/testtask"
 
 task :default => :test
 
-task :test do
+desc 'Start riak test server'
+task :start do
   require File.expand_path("./test/helper", File.dirname(__FILE__))
+  puts '..:: Starting riak test server ::..'
+  test_server.start
+end
 
-  Dir["test/*.rb"].each { |file| load file }
+desc 'Run tests'
+task :test => [:start] do
+  Dir["test/*.rb"].each { |file| load file unless file =~ /helper.rb/ }
+end
+
+desc 'Stop riak test server'
+task :stop => [:start] do
+  puts '..:: Stop riak test server ::..'
+
+  flush_db!
+  test_server.stop
+end
+
+at_exit do
+  puts '..:: Stop riak test server ::..'
+  sleep 1
+
+  flush_db!
+  test_server.stop
 end
