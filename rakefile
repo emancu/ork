@@ -7,6 +7,7 @@ task :start do
   require File.expand_path("./test/helper", File.dirname(__FILE__))
   puts '..:: Starting riak test server ::..'
   test_server.start
+  sleep 1
 end
 
 desc 'Run tests'
@@ -23,9 +24,11 @@ task :stop => [:start] do
 end
 
 at_exit do
-  puts '..:: Stop riak test server ::..'
-  sleep 1
+  if $server
+    puts '..:: Stopping riak test server ::..'
+    sleep 1
 
-  flush_db!
-  test_server.stop
+    $server.drop
+    $server.stop
+  end
 end
