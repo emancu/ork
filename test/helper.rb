@@ -1,15 +1,21 @@
 $LOAD_PATH.unshift(File.expand_path(File.dirname(__FILE__) + "/../lib"))
 
+require 'coveralls'
+Coveralls.wear!
+
+SimpleCov.start do
+  project_name "Ork"
+  command_name "Protest"
+
+  add_filter "/test/"
+end
+
 require "rubygems"
 require "protest"
 require "ork"
-
-# require 'coveralls'
-# Coveralls.wear!
+require 'riak/test_server'
 
 Riak.disable_list_keys_warnings = true
-
-require 'riak/test_server'
 
 def test_server
   $test_server ||= begin
