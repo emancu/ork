@@ -22,6 +22,7 @@ require 'riak/test_server'
 require "ork"
 
 Riak.disable_list_keys_warnings = true
+Protest.report_with(:progress)
 
 def test_server
   $server ||= begin
