@@ -22,7 +22,7 @@ module Ork
     def initialize(atts = {})
       @attributes = {}
       @_memo = {}
-      update_attributes(atts)
+      update_attributes(model.defaults.merge(atts))
     end
 
     # Check for equality by doing the following assertions:

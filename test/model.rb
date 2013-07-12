@@ -115,7 +115,7 @@ Protest.describe 'Ork::Model' do
     end
   end
 
-  context "Equality" do
+  context 'Equality' do
     setup do
       @event = Event.new(name: 'Ruby')
       @other = Event.new(name: 'Emerald')
@@ -134,6 +134,26 @@ Protest.describe 'Ork::Model' do
 
     test 'unsaved intances' do
       pending 'Define how equality will be'
+    end
+  end
+
+  context "Attribute's options" do
+    context '*default*' do
+      setup do
+        Event.send(:attribute, :age, default: 18)
+      end
+
+      test 'have a defaults hash' do
+        assert_equal ({age: 18}), Event.defaults
+      end
+
+      test 'when no default defined nil is assigned as first value' do
+        assert_equal nil, Event.new.name
+      end
+
+      test 'set the default value defined' do
+        assert_equal 18, Event.new.age
+      end
     end
   end
 end

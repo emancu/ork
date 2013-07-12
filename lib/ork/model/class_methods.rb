@@ -27,6 +27,10 @@ module Ork::Model
       @uniques ||= []
     end
 
+    def defaults
+      @defaults ||= {}
+    end
+
     protected
 
     # Declares persisted attributes.
@@ -53,17 +57,12 @@ module Ork::Model
     #     end
     #   end
     #
-    def attribute(name, cast = nil)
+    def attribute(name, options = {})
       attributes << name unless attributes.include?(name)
+      defaults[name] = options[:default] if options.has_key?(:default)
 
-      if cast
-        define_method(name) do
-          cast[@attributes[name]]
-        end
-      else
-        define_method(name) do
-          @attributes[name]
-        end
+      define_method(name) do
+        @attributes[name]
       end
 
       define_method(:"#{name}=") do |value|
