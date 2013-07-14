@@ -14,7 +14,6 @@ end
 Protest.describe 'Finders' do
   setup do
     @human1 = Human.create(name: 'Tony',  last_name: 'Montana')
-    @human2 = Human.create(name: 'Cacho', last_name: 'Castaña')
   end
 
   teardown do
@@ -36,9 +35,10 @@ Protest.describe 'Finders' do
   end
 
   test 'list all the objects' do
+    human2 = Human.create(name: 'Cacho', last_name: 'Castaña')
     assert_equal 2, Human.list.size
     assert Human.list.include?(@human1)
-    assert Human.list.include?(@human2)
+    assert Human.list.include?(human2)
   end
 
 end

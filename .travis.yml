@@ -3,12 +3,8 @@ rvm:
   - 1.9.3
   - 2.0.0
 
-services:
-  - riak
-
 before_install:
   - gem install dep
-  - "if [[ -x /tmp/.riaktest/bin/riak ]]; then /tmp/.riaktest/bin/riak stop; rm -rf /tmp/.riaktest; fi"
   - ! 'echo root = \"/tmp/.riaktest\" > test/test_riak_server.toml'
   - ! 'echo min_port = 15000 >> test/test_riak_server.toml'
   - ! 'echo source = \"/usr/sbin\" >> test/test_riak_server.toml'
