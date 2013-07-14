@@ -155,5 +155,44 @@ Protest.describe 'Ork::Model' do
         assert_equal 18, Event.new.age
       end
     end
+
+    context '*accessors*' do
+      test 'define no attribute accessor' do
+        Event.send(:attribute, :private_attribute, accessors: nil)
+        event = Event.new
+
+        assert !event.respond_to?(:private_attribute)
+        assert !event.respond_to?(:private_attribute=)
+        assert !event.respond_to?(:private_attribute?)
+      end
+
+      test 'define all attribute accessors' do
+        Event.send(:attribute, :flufo, accessors: [:reader, :writer, :question])
+        event = Event.new
+
+        assert event.respond_to?(:flufo)
+        assert event.respond_to?(:flufo=)
+        assert event.respond_to?(:flufo?)
+      end
+
+      test 'define one attribute accessors' do
+        Event.send(:attribute, :boolean, accessors: :question)
+        event = Event.new
+
+        assert !event.respond_to?(:boolean)
+        assert !event.respond_to?(:boolean=)
+        assert event.respond_to?(:boolean?)
+      end
+
+      test 'wrong options do not defines accessors' do
+        Event.send(:attribute, :weird, accessors: Object)
+        event = Event.new
+
+        assert !event.respond_to?(:weird)
+        assert !event.respond_to?(:weird=)
+        assert !event.respond_to?(:weird?)
+      end
+    end
+
   end
 end

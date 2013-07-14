@@ -61,13 +61,13 @@ module Ork::Model
       attributes << name unless attributes.include?(name)
       defaults[name] = options[:default] if options.has_key?(:default)
 
-      define_method(name) do
-        @attributes[name]
+      if options.has_key?(:accessors)
+        to_define = Array(options[:accessors]) & accessor_options
+      else # Default methods
+        to_define = [:reader, :writer]
       end
 
-      define_method(:"#{name}=") do |value|
-        @attributes[name] = value
-      end
+      to_define.each{|m| send("#{m}_for", name) }
     end
 
     # Index any method on your model. Once you index a method, you can
@@ -83,6 +83,38 @@ module Ork::Model
     #
     def unique(attribute)
       uniques << attribute unless uniques.include?(attribute)
+    end
+
+    private
+
+    # Valid options for attribute accessor value
+    #
+    def accessor_options
+      [:reader, :writer, :question]
+    end
+
+    # Create reader method
+    #
+    def reader_for(name)
+      define_method(name) do
+        @attributes[name]
+      end
+    end
+
+    # Create writer method
+    #
+    def writer_for(name)
+      define_method(:"#{name}=") do |value|
+        @attributes[name] = value
+      end
+    end
+
+    # Create question method
+    #
+    def question_for(name)
+      define_method(:"#{name}?") do
+        !!@attributes[name]
+      end
     end
   end
 end
