@@ -38,10 +38,6 @@ Protest.describe 'Ork::Model' do
       assert event.respond_to? :location=
     end
 
-    test 'cast to different types' do
-      pending 'Define how to cast objects'
-    end
-
     test 'model can change bucket name' do
       Event.bucket_name= 'other_bucket_for_event'
       assert_equal 'other_bucket_for_event', Event.bucket_name
