@@ -13,14 +13,6 @@ task :test => [:start] do
   Dir["test/*.rb"].each { |file| load file unless file =~ /helper.rb/ }
 end
 
-desc 'Stop riak test server'
-task :stop => [:start] do
-  puts '..:: Stop riak test server ::..'
-
-  flush_db!
-  test_server.stop
-end
-
 at_exit do
   if $server
     puts '..:: Stopping riak test server ::..'
