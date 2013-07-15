@@ -95,6 +95,19 @@ Protest.describe 'Ork::Model' do
       assert_equal 4, @event.location
     end
 
+    test 'reload returns the same object if it was not saved' do
+      assert_equal @event, @event.reload
+    end
+
+    test 'reload erease and updates all the attributes from the database' do
+      @event.save
+      @event.update_attributes(name: 'changed', location: 26)
+      @event.reload
+
+      assert_equal 'Ruby', @event.name
+      assert_equal nil, @event.location
+    end
+
     context 'Deletion' do
       test 'freeze the object' do
         assert !@event.frozen?

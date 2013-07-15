@@ -128,6 +128,7 @@ module Ork
     def load!(id)
       @id = self.__robject.key = id
       @__robject = @__robject.reload(force: true)
+      @attributes = {}
       update_attributes(@__robject.data)
 
       self
