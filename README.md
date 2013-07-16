@@ -11,6 +11,16 @@ Ork is a small Ruby modeling layer for **Riak** database, inspired by [Ohm](http
 
 `ork` requires Ruby 1.9 or later and the `riak-client` gem to connect to **Riak**.
 
+Install dependencies using `dep` is easy as run:
+
+    dep install
+
+### Development and Testing dependencies
+
+Use the special dependencies file:
+
+    dep install -f .gems-test
+
 ## Installation
 
 Install [Riak](http://basho.com/riak/) with your package manager:
