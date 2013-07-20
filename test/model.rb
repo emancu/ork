@@ -21,10 +21,6 @@ Protest.describe 'Ork::Model' do
       assert_equal [:name], Event.uniques
     end
 
-    test 'have an indices list' do
-      assert_equal [:location], Event.indices
-    end
-
     test 'model owns a bucket name by default' do
       assert_equal 'event', Event.bucket_name
     end
