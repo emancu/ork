@@ -77,13 +77,16 @@ module Ork::Model
       indices[name] = Index.new(name) unless indices.include?(name)
     end
 
-    # Create a unique index for any method on your model.
+    # Create a 'unique index' for any method on your model.
+    # Actually it creates a regular index, but it checks if
+    # it's repeated just before persist the new values.
     #
     # Note: if there is a conflict while saving, an
     # `Ork::UniqueIndexViolation` violation is raised.
     #
     def unique(attribute)
       uniques << attribute unless uniques.include?(attribute)
+      index(attribute)
     end
 
     private

@@ -6,19 +6,16 @@ class Event
 
   attribute :name
   attribute :location
-
-  unique :name
-  index :location
 end
 
 Protest.describe 'Ork::Model' do
+  teardown do
+    flush_db!
+  end
+
   context 'Definition' do
     test 'have an attributes list' do
       assert_equal [:name, :location], Event.attributes
-    end
-
-    test 'have a uniques list' do
-      assert_equal [:name], Event.uniques
     end
 
     test 'model owns a bucket name by default' do

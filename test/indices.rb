@@ -7,7 +7,7 @@ class Dog
   attribute :age
 
   index :name
-  index :age
+  unique :age
 end
 
 Protest.describe 'Indices' do
@@ -17,6 +17,10 @@ Protest.describe 'Indices' do
 
   test 'have an indices list' do
     assert_equal [:name, :age], Dog.indices.keys
+  end
+
+  test 'have a uniques list' do
+    assert_equal [:age], Dog.uniques
   end
 
   test 'new instance has no indices' do
@@ -36,9 +40,41 @@ Protest.describe 'Indices' do
     assert_equal Set['Athos'], robject.indexes['name_bin']
   end
 
+  test 'prevent save when on an UniqueIndexViolation error' do
+    Dog.create(age: 14)
+    dog = Dog.new(name: 'Unsaved', age: 14)
+    begin
+      dog.save!
+    rescue Ork::UniqueIndexViolation => e
+    ensure
+      assert_equal 1, Dog.all.size
+    end
+
+    assert dog.new?
+  end
+
+  test "doesn't raise when saving again the same object" do
+    dog = Dog.create(name: 'Unique dog', age: 14)
+    exception = nil
+
+    begin
+      Dog[dog.id].save
+    rescue Exception => e
+      exception = e
+    end
+
+    assert_equal nil, exception
+  end
+
+
   context 'Errors' do
-    test 'raise an error if the index' do
+    test 'raise an error if the index is not defined' do
       assert_raise(Ork::IndexNotFound) { Dog.find(:not_an_index, 4) }
+    end
+
+    test 'raises when it already exists a unique value' do
+      Dog.create(age: 21)
+      assert_raise(Ork::UniqueIndexViolation) { Dog.create(age: 21) }
     end
 
     test 'should only contain ASCII characters'

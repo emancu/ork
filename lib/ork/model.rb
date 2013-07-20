@@ -137,19 +137,35 @@ module Ork
 
     # Persist the object in Riak database
     def __save__
-      update_indices
       __robject.content_type = 'application/json'
       __robject.data = @attributes.merge('_type' => model.name)
+
+      __check_unique_indices
+      __update_indices
       __robject.store
+
       @id = __robject.key
 
       self
     end
 
     # Build the secondary indices of this object
-    def update_indices
+    def __update_indices
       model.indices.values.each do |index|
         __robject.indexes[index.riak_name] = index.value_from(attributes)
+      end
+    end
+
+    # Look up into Riak for repeated values on unique attributes
+    def __check_unique_indices
+      model.uniques.each do |uniq|
+        if value = attributes[uniq]
+          index = model.indices[uniq]
+          records = model.bucket.get_index(index.riak_name, value)
+          unless records.empty? || records == [self.id]
+            raise Ork::UniqueIndexViolation, "#{uniq} is not unique"
+          end
+        end
       end
     end
 
