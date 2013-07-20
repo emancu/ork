@@ -20,7 +20,7 @@ module Ork::Model
     end
 
     def indices
-      @indices ||= []
+      @indices ||= {}
     end
 
     def uniques
@@ -70,10 +70,11 @@ module Ork::Model
       to_define.each{|m| send("#{m}_for", name) }
     end
 
-    # Index any method on your model. Once you index a method, you can
-    # use it in `find` statements.
-    def index(attribute)
-      indices << attribute unless indices.include?(attribute)
+    # Index any attribute on your model. Once you index an attribute,
+    # you can use it in `find` statements.
+    #
+    def index(name)
+      indices[name] = Index.new(name) unless indices.include?(name)
     end
 
     # Create a unique index for any method on your model.

@@ -1,6 +1,7 @@
 require_relative 'model/class_methods'
 require_relative 'model/associations'
 require_relative 'model/finders'
+require_relative 'model/index'
 
 module Ork
   module Model
@@ -33,7 +34,6 @@ module Ork
     def ==(other)
       other.kind_of?(model) && other.id == id
     end
-
     alias :eql? :==
 
     def new?
@@ -125,6 +125,7 @@ module Ork
 
     protected
 
+    # Overwrite attributes with the persisted attributes in Riak.
     def load!(id)
       @id = self.__robject.key = id
       @__robject = @__robject.reload(force: true)
@@ -136,12 +137,20 @@ module Ork
 
     # Persist the object in Riak database
     def __save__
+      update_indices
       __robject.content_type = 'application/json'
       __robject.data = @attributes.merge('_type' => model.name)
       __robject.store
       @id = __robject.key
 
       self
+    end
+
+    # Build the secondary indices of this object
+    def update_indices
+      model.indices.values.each do |index|
+        __robject.indexes[index.riak_name] = index.value_from(attributes)
+      end
     end
 
     def __robject
