@@ -9,10 +9,6 @@ class Event
 end
 
 Protest.describe 'Ork::Model' do
-  teardown do
-    flush_db!
-  end
-
   context 'Definition' do
     test 'have an attributes list' do
       assert_equal [:name, :location], Event.attributes
