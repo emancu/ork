@@ -1,9 +1,9 @@
 # Ork
 [![Gem Version](https://badge.fury.io/rb/ork.png)](http://badge.fury.io/rb/ork)
-[![Build Status](https://secure.travis-ci.org/eMancu/ork.png)](http://travis-ci.org/eMancu/ork)
-[![Code Climate](https://codeclimate.com/github/eMancu/ork.png)](https://codeclimate.com/github/eMancu/ork)
-[![Coverage Status](https://coveralls.io/repos/eMancu/ork/badge.png)](https://coveralls.io/r/eMancu/ork)
-[![Dependency Status](https://gemnasium.com/eMancu/ork.png)](https://gemnasium.com/eMancu/ork)
+[![Build Status](https://secure.travis-ci.org/emancu/ork.png)](http://travis-ci.org/emancu/ork)
+[![Code Climate](https://codeclimate.com/github/emancu/ork.png)](https://codeclimate.com/github/emancu/ork)
+[![Coverage Status](https://coveralls.io/repos/emancu/ork/badge.png)](https://coveralls.io/r/emancu/ork)
+[![Dependency Status](https://gemnasium.com/emancu/ork.png)](https://gemnasium.com/emancu/ork)
 
 Ork is a small Ruby modeling layer for **Riak** database, inspired by [Ohm](http://ohm.keyvalue.org).
 
@@ -45,17 +45,17 @@ Take a look at the example below:
 ```ruby
 class Post
   include Ork::Model
-  
+
   attribute :name
   attribute :age, default: 18
-  
+
   index :age
   unique :name
 end
 
 class Comment
   include Ork::Model
-  
+
   attribute :text
   reference :post, :Post
 end

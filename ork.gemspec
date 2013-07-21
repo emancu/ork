@@ -6,7 +6,7 @@ Gem::Specification.new do |s|
   s.description = 'Ork is a small Ruby modeling layer for Riak, inspired by Ohm.'
   s.authors     = ['Emiliano Mancuso']
   s.email       = ['emiliano.mancuso@gmail.com']
-  s.homepage    = 'http://github.com/eMancu/ork'
+  s.homepage    = 'http://github.com/emancu/ork'
   s.license     = 'MIT'
 
   s.files = Dir[
