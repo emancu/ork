@@ -1,5 +1,8 @@
 # encoding: utf-8
 require_relative 'helper'
+require 'mocha/api'
+
+include(Mocha::API)
 
 class Human
   include Ork::Model
@@ -18,6 +21,15 @@ Protest.describe 'Finders' do
 
   teardown do
     flush_db!
+  end
+
+  test 'raise an exception on load when a request fails' do
+    exception =  Riak::HTTPFailedRequest.new(:get, 200, 401, {}, {})
+    Riak::RObject.any_instance.stubs(:reload).raises(exception)
+
+    assert_raise(Riak::FailedRequest) { Human[@human1.id] }
+
+    Riak::RObject.any_instance.unstub(:reload)
   end
 
   context '*[]*' do

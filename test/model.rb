@@ -1,5 +1,8 @@
 # encoding: utf-8
 require_relative 'helper'
+require 'mocha/api'
+
+include(Mocha::API)
 
 class Event
   include Ork::Model
@@ -110,6 +113,17 @@ Protest.describe 'Ork::Model' do
         @event.delete
         assert !Event.bucket.exist?(@event.id)
       end
+
+      test 'return false when something occurs' do
+        exception =  Riak::HTTPFailedRequest.new(:get, 200, 401, {}, {})
+        Riak::RObject.any_instance.stubs(:delete).raises(exception)
+        @event.save
+
+        assert !@event.delete
+        assert !@event.frozen?
+
+        Riak::RObject.any_instance.unstub(:delete)
+      end
     end
   end
 
@@ -180,6 +194,7 @@ Protest.describe 'Ork::Model' do
         assert !event.respond_to?(:boolean)
         assert !event.respond_to?(:boolean=)
         assert event.respond_to?(:boolean?)
+        assert !event.boolean?
       end
 
       test 'wrong options do not defines accessors' do
