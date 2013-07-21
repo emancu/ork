@@ -7,13 +7,10 @@ module Ork::Model
     #
     #   u = User.create
     #   u == User[u.id]
-    #   # =>  true
+    #   # => true
     #
     def [](id)
-      new.send(:load!, id) if exist?(id)
-    rescue Riak::FailedRequest => e
-      raise e unless e.not_found?
-      nil
+      load_key(id) if exist?(id)
     end
 
     # Check if the ID exists.
@@ -23,22 +20,51 @@ module Ork::Model
     alias :exists? :exist?
 
     # Find all documents in the Document's bucket and return them.
-    # @overload list()
-    #   Get all documents and return them in an array.
-    #   @param [Hash] options options to be passed to the
-    #     underlying {Bucket#keys} method.
     #   @return [Array<Document>] all found documents in the bucket
     #
     # @Note: This operation is incredibly expensive and should not
     #   be used in production applications.
     #
     def all
-      bucket.keys.inject([]) do |acc, k|
-        obj = self[k]
-        obj ? acc << obj : acc
-      end
+      bucket.keys.map{|k| load_key k}
     end
     alias :list :all
+
+    # Find values in indexed fields.
+    #
+    # Example:
+    #
+    #   class User
+    #     include Ork::Model
+    #
+    #     attribute :name
+    #     index :name
+    #   end
+    #
+    #   u = User.create(name: 'John')
+    #   User.find(name: 'John').include?(u)
+    #   # => true
+    #
+    #   User.find(name: 'Mike').include?(u)
+    #   # => false
+    #
+    # Note: If the key was not defined, an
+    # `Ork::IndexNotFound` exception is raised.
+    #
+    def find(by_index, value)
+      raise Ork::IndexNotFound unless indices.has_key? by_index
+
+      index = indices[by_index]
+      bucket.get_index(index.riak_name, value).map{|k| load_key k}
+    end
+
+    private
+
+    def load_key(id)
+      new.send(:load!, id)
+    rescue Riak::FailedRequest => e
+      raise e unless e.not_found?
+    end
 
   end
 end
