@@ -1,5 +1,5 @@
 # encoding: utf-8
-require_relative 'helper'
+require_relative '../helper'
 require 'mocha/api'
 
 include(Mocha::API)

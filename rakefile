@@ -10,7 +10,7 @@ end
 
 desc 'Run tests'
 task :test => [:start] do
-  Dir["test/*.rb"].each { |file| load file unless file =~ /helper.rb/ }
+  Dir["test/**/*_test.rb"].each { |file| load file }
 end
 
 at_exit do

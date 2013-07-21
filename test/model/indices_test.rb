@@ -1,4 +1,4 @@
-require_relative 'helper'
+require_relative '../helper'
 
 class Dog
   include Ork::Model
