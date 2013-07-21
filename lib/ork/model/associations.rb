@@ -89,8 +89,9 @@ module Ork::Model
     #
     def referenced(name, model, reference = to_reference)
       define_method name do
+        return nil if self.id.nil?
         model = Ork::Utils.const(self.class, model)
-        model.find(:"#{reference}_id" => id).first
+        model.find(:"#{reference}_id", self.id).first
       end
     end
 
@@ -121,8 +122,9 @@ module Ork::Model
     #
     def collection(name, model, reference = to_reference)
       define_method name do
+        return [] if self.id.nil?
         model = Ork::Utils.const(self.class, model)
-        model.find(:"#{reference}_id" => id)
+        model.find(:"#{reference}_id", self.id)
       end
     end
 
