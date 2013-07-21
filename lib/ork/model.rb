@@ -1,6 +1,7 @@
 require_relative 'model/class_methods'
 require_relative 'model/associations'
 require_relative 'model/finders'
+require_relative 'model/index'
 
 module Ork
   module Model
@@ -33,7 +34,6 @@ module Ork
     def ==(other)
       other.kind_of?(model) && other.id == id
     end
-
     alias :eql? :==
 
     def new?
@@ -125,6 +125,7 @@ module Ork
 
     protected
 
+    # Overwrite attributes with the persisted attributes in Riak.
     def load!(id)
       @id = self.__robject.key = id
       @__robject = @__robject.reload(force: true)
@@ -138,10 +139,34 @@ module Ork
     def __save__
       __robject.content_type = 'application/json'
       __robject.data = @attributes.merge('_type' => model.name)
+
+      __check_unique_indices
+      __update_indices
       __robject.store
+
       @id = __robject.key
 
       self
+    end
+
+    # Build the secondary indices of this object
+    def __update_indices
+      model.indices.values.each do |index|
+        __robject.indexes[index.riak_name] = index.value_from(attributes)
+      end
+    end
+
+    # Look up into Riak for repeated values on unique attributes
+    def __check_unique_indices
+      model.uniques.each do |uniq|
+        if value = attributes[uniq]
+          index = model.indices[uniq]
+          records = model.bucket.get_index(index.riak_name, value)
+          unless records.empty? || records == [self.id]
+            raise Ork::UniqueIndexViolation, "#{uniq} is not unique"
+          end
+        end
+      end
     end
 
     def __robject

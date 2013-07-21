@@ -1,10 +1,10 @@
 require 'ork/connection'
 require 'ork/model'
 require 'ork/utils'
+require 'ork/errors'
 require "riak"
 
 module Ork
-  class Error < StandardError; end
 
   def self.conn
     @conn ||= Ork::Connection.new
