@@ -2,7 +2,7 @@ require_relative '../helper'
 
 Protest.describe 'referenced' do
   class Post
-    include Ork::Model
+    include Ork::Document
     attribute :name
 
     referenced :comment, :Comment
@@ -10,7 +10,7 @@ Protest.describe 'referenced' do
   end
 
   class Comment
-    include Ork::Model
+    include Ork::Document
     attribute :text
 
     reference :post, :Post

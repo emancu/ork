@@ -2,12 +2,12 @@ require_relative '../helper'
 
 Protest.describe 'reference' do
   class Post
-    include Ork::Model
+    include Ork::Document
     attribute :name
   end
 
   class Comment
-    include Ork::Model
+    include Ork::Document
     attribute :text
 
     reference :post, :Post

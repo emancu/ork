@@ -5,7 +5,7 @@ require 'mocha/api'
 include(Mocha::API)
 
 class Event
-  include Ork::Model
+  include Ork::Document
 
   attribute :name
   attribute :location
