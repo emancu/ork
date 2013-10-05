@@ -1,5 +1,4 @@
 riak-client -v 1.4.2
 coveralls -v 0.6.7
-toml-rb -v 0.1.3
 protest -v 0.5.1
 mocha -v 0.14.0
