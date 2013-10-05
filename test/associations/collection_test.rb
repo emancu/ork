@@ -17,11 +17,12 @@ Protest.describe 'collection' do
     reference :weird_post, :Post
   end
 
-  teardown do
-    flush_db!
+  setup do
+    randomize_bucket_name Post
+    randomize_bucket_name Comment
   end
 
-  should 'return an empty array when there are not referenced objects' do
+  test 'return an empty array when there are not referenced objects' do
     post = Post.new
 
     assert post.comments.empty?
@@ -34,7 +35,7 @@ Protest.describe 'collection' do
     assert !post.respond_to?(:comments=)
   end
 
-  should 'return the array of Comments referencing this Post' do
+  test 'return the array of Comments referencing this Post' do
     post = Post.create name: 'New'
     comment1 = Comment.create post: post, text: 'one'
     comment2 = Comment.create post: post, text: 'two'
@@ -56,7 +57,7 @@ Protest.describe 'collection' do
     assert post.weird_comments.include?(comment2)
   end
 
-  should 'update referenced object' do
+  test 'update referenced object' do
     post = Post.create name: 'New'
     comment = Comment.create text: 'First One'
 

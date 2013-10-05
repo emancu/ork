@@ -11,8 +11,8 @@ class Dog
 end
 
 Protest.describe 'Indices' do
-  teardown do
-    flush_db!
+  setup do
+    randomize_bucket_name Dog
   end
 
   test 'have an indices list' do
@@ -40,7 +40,7 @@ Protest.describe 'Indices' do
     assert_equal Set['Athos'], robject.indexes['name_bin']
   end
 
-  test 'prevent save when on an UniqueIndexViolation error' do
+  test 'prevent save on UniqueIndexViolation error' do
     Dog.create(age: 14)
     dog = Dog.new(name: 'Unsaved', age: 14)
     begin

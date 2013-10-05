@@ -42,6 +42,8 @@ Protest.describe 'Ork::Model' do
 
   context 'Instance' do
     setup do
+      randomize_bucket_name Event
+
       @event = Event.new(name: 'Ruby')
     end
 
@@ -129,6 +131,8 @@ Protest.describe 'Ork::Model' do
 
   context 'Equality' do
     setup do
+      randomize_bucket_name Event
+
       @event = Event.new(name: 'Ruby')
       @other = Event.new(name: 'Emerald')
     end

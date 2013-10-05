@@ -16,11 +16,8 @@ end
 
 Protest.describe 'Finders' do
   setup do
+    randomize_bucket_name Human
     @human1 = Human.create(name: 'Tony',  last_name: 'Montana')
-  end
-
-  teardown do
-    flush_db!
   end
 
   test 'raise an exception on load when a request fails' do
