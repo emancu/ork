@@ -14,8 +14,9 @@ Protest.describe 'reference' do
     reference :weird_post, :Post
   end
 
-  teardown do
-    flush_db!
+  setup do
+    randomize_bucket_name Post
+    randomize_bucket_name Comment
   end
 
   should 'return nil when there is no reference object' do

@@ -47,6 +47,11 @@ def test_server
               end
 end
 
-def flush_db!
-  test_server.drop
+def randomize_bucket_name(klass)
+  klass.bucket_name= [
+    'test',
+    klass.to_s,
+    Time.now.to_i,
+    rand(36**10).to_s(36)
+  ].join('-')
 end
