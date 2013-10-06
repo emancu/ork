@@ -135,12 +135,8 @@ module Ork
       attributes = @attributes.merge('_type' => model.name)
 
       model.embedding.each do |embedded|
-        require 'pry'; binding.pry
-        attributes[embedded] = self.send(embedded).__persist_attributes # @embedding[embedded]
-        ## la idea es hacer cascade y convertirlos a todos usando el __persist_attributes
+        attributes[embedded] = self.send(embedded).__persist_attributes
       end
-
-      # require 'pry'; binding.pry
 
       attributes
     end

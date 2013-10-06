@@ -128,6 +128,88 @@ module Ork::Model
       end
     end
 
+
+
+
+    # TODO: A macro for defining an attribute, an index, and an accessor
+    # for a given model.
+    #
+    # Example:
+    #
+    #   class Post
+    #     include Ork::Model
+    #
+    #     embed :author, :Author
+    #   end
+    #
+    #   # It's the same as:
+    #
+    #   class Post
+    #     include Ork::Model
+    #
+    #   end
+    #
+    def embed(name, model)
+      # attributes << name unless attributes.include?(name)
+      embedding << name unless embedding.include?(name)
+
+      define_method(name) do
+        return nil unless @embedding.has_key? name
+        @_memo[name] ||= begin
+                           model = Ork::Utils.const(self.class, model)
+                           model.new(@embedding[name])
+                         end
+      end
+
+      define_method(:"#{name}=") do |object|
+        unless object.respond_to?(:embeddable?) && object.embeddable?
+          raise Ork::NotAnEmbeddableObject.new(object)
+        end
+
+        @_memo.delete(name)
+        @embedding[name] = object.attributes
+        object.__parent = self
+
+        object
+      end
+    end
+
+    # TODO
+    #
+    #
+    #
+    #
+    #
+    #
+    def embed_collection(name, model)
+      # attributes << name unless attributes.include?(name)
+      embedding  << name unless embedded.include?(name)
+
+      define_method(name) do
+        #TODO: .each
+        @_memo[name] ||= begin
+                           model = Ork::Utils.const(self.class, model)
+                           model.new(@embedding[name])
+                         end
+      end
+
+      define_method(:"#{name}=") do |objects|
+        if document = objects.detect{|o| !o.embeddable?}
+          raise Ork::NotAnEmbeddableObject.new(document)
+        end
+
+        @_memo.delete(name)
+        @embedding[name] = objects.map(&:attributes)
+      end
+
+      define_method(:"add_#{name}") do |object|
+        raise Ork::NotAnEmbeddableObject.new(object) unless object.embeddable?
+
+        @_memo[name] << object unless @_memo[name].nil?
+        @embedding[name] = Array(@embedding[name]) << object.attributes
+      end
+    end
+
     private
 
     def to_reference

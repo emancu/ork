@@ -1,6 +1,7 @@
 require 'ork/connection'
 require 'ork/model'
 require 'ork/model/document'
+require 'ork/embedded'
 require 'ork/utils'
 require 'ork/errors'
 require "riak"
