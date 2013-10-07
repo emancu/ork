@@ -28,6 +28,7 @@ module Ork
     def self.const(context, name)
       case name
       when Symbol then context.const_get(name)
+      when String then context.const_get(name.to_sym)
       else name
       end
     end

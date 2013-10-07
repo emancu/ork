@@ -21,30 +21,28 @@ Protest.describe 'embed' do
     assert note.annotation.nil?
   end
 
-  should 'raise an exception if the parent is missing' do
-    assert_raise(Ork::ParentMissing) do
-      Annotation.new.__parent
-    end
-  end
-
   should 'raise an exception when embeds an object that is not embeddable' do
     assert_raise(Ork::NotAnEmbeddableObject) do
-      Note.new.annotation = Post.new
+      Note.new.annotation = Note.new
     end
   end
 
-  should 'return the parent object' do
+  should 'return the attributes of embedded object' do
     note = Note.new name: 'New'
-    note.annotation = Annotation.new text: 'An annotation1'
+    note.annotation = Annotation.new text: 'An annotation'
 
-    assert_equal note, note.annotation.__parent
+    assert_equal "An annotation", note.embedding[:annotation][:text]
+    assert_equal note, note.embedding[:annotation][:note]
   end
 
-  should 'return the embedded object' do
-    note = Note.new name: 'New'
-    annotation = Annotation.new text: 'An annotation2', note: note
+  should 'persist and retrieve the embedded object' do
+    annotation = Annotation.new text: 'Persisted annotation'
+    note = Note.create name: 'New', annotation: annotation
 
-    assert_equal note, annotation.__parent
+    note.reload
+    annotation = note.annotation
+
+    assert_equal Annotation, annotation.class
+    assert_equal 'Persisted annotation', annotation.text
   end
 end
-

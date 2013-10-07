@@ -82,5 +82,13 @@ module Ork
 
       self
     end
+
+    def __persist_attributes
+      attributes = super
+      attributes.delete model.__parent_key
+
+      attributes
+    end
+
   end
 end

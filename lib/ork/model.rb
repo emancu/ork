@@ -30,7 +30,27 @@ module Ork
       atts.each { |att, val| send(:"#{att}=", val) }
     end
 
+    # Writhe the dictionary of key-value pairs of embedded objects.
+    #
+    def update_embedded_attributes(atts)
+      atts.each do |att, val|
+        model = Ork::Utils.const(self.class, val.delete('_type'))
+        send(:"#{att}=", model.new(val))
+      end
+    end
+
     protected
+
+    def __persist_attributes
+      attributes = @attributes.merge('_type' => model.name)
+
+      model.embedding.each do |embedded|
+        attributes[embedded] = self.send(embedded).__persist_attributes
+      end
+
+      attributes
+    end
+
 
     def model
       self.class

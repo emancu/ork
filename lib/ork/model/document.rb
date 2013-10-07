@@ -111,7 +111,17 @@ module Ork
       @id = self.__robject.key = id
       @__robject = @__robject.reload(force: true)
       @attributes = {}
-      update_attributes(@__robject.data)
+      @embedding = {}
+
+      data = @__robject.data
+      embedded_data = {}
+
+      model.embedding.each do |embedded|
+        embedded_data[embedded] = data.delete embedded.to_s
+      end
+
+      update_attributes data
+      update_embedded_attributes embedded_data
 
       self
     end
@@ -128,17 +138,6 @@ module Ork
       @id = __robject.key
 
       self
-    end
-
-
-    def __persist_attributes
-      attributes = @attributes.merge('_type' => model.name)
-
-      model.embedding.each do |embedded|
-        attributes[embedded] = self.send(embedded).__persist_attributes
-      end
-
-      attributes
     end
 
     # Build the secondary indices of this object
