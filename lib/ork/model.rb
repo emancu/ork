@@ -43,6 +43,7 @@ module Ork
 
     def __persist_attributes
       attributes = @attributes.merge('_type' => model.name)
+      attributes.delete(model.__parent_key) if model.respond_to? :__parent_key
 
       model.embedding.each do |embedded|
         attributes[embedded] = self.send(embedded).__persist_attributes
@@ -50,7 +51,6 @@ module Ork
 
       attributes
     end
-
 
     def model
       self.class

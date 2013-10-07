@@ -32,6 +32,15 @@ Protest.describe 'embedded' do
     assert_equal note, annotation.__parent
   end
 
+  should 'assign a parent and use the proper method' do
+    note = Note.new name: 'New'
+    annotation = Annotation.new text: 'An annotation1'
+    annotation.__parent = note
+
+    assert_equal note, annotation.__parent
+    assert_equal note, annotation.note
+  end
+
   should 'build the parent relation when retrieve an embedded object from database' do
     annotation = Annotation.new text: 'Persisted annotation'
     note = Note.create name: 'New', annotation: annotation
@@ -41,6 +50,24 @@ Protest.describe 'embedded' do
 
     assert_equal note, annotation.__parent
     assert_equal note, annotation.note
+  end
+
+  context 'Persistence'do
+    setup do
+      @annotation = Annotation.new text: 'Annotation'
+    end
+
+    should 'not persist parent attribute' do
+      Note.new name: 'A note', annotation: @annotation
+
+      deny @annotation.note.nil?
+      deny @annotation.send(:__persist_attributes).has_key? :note
+    end
+
+    should 'not respond to save methods' do
+      deny @annotation.respond_to? :save
+      deny @annotation.respond_to? :save!
+    end
   end
 
 end
