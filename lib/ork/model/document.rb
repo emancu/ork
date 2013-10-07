@@ -64,7 +64,7 @@ module Ork
     # Example:
     #
     #   class User
-    #     include Ork::Model
+    #     include Ork::Document
     #
     #     attribute :name
     #

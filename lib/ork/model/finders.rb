@@ -35,7 +35,7 @@ module Ork::Model
     # Example:
     #
     #   class User
-    #     include Ork::Model
+    #     include Ork::Document
     #
     #     attribute :name
     #     index :name

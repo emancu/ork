@@ -45,7 +45,7 @@ module Ork::Model
     #
     # Example:
     #   class User
-    #     include Ork::Model
+    #     include Ork::Document
     #
     #     attribute :name
     #   end
@@ -53,7 +53,7 @@ module Ork::Model
     #   # It's the same as:
     #
     #   class User
-    #     include Ork::Model
+    #     include Ork::Document
     #
     #     def name
     #       @attributes[:name]
@@ -133,6 +133,29 @@ module Ork::Model
     module ClassMethods
       attr_accessor :__parent_key
 
+      # Declares parent accessors for embedded objects and set the parent key
+      #
+      # Example:
+      #   class Comment
+      #     include Ork::Embeddable
+      #
+      #     embedded :post, :Post
+      #   end
+      #
+      #   # It's the same as:
+      #
+      #   class Comment
+      #     include Ork::Embeddable
+      #
+      #     def post
+      #       @attributes[:post]
+      #     end
+      #
+      #     def post=(post)
+      #       @attributes[:post] = post
+      #     end
+      #   end
+      #
       def embedded(name, model)
         @__parent_key = name
 

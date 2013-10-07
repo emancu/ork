@@ -20,7 +20,6 @@ module Ork
       @attributes[self.class.__parent_key] = object
     end
 
-
     # Check for equality by doing the following assertions:
     #
     # 1. That the passed model is of the same type.
@@ -42,11 +41,13 @@ module Ork
     #
     #    User.new(name: 'John').inspect
     #    # => #<User {:name=>"John"}>
+    #
     def inspect
       "#<#{model} #{attributes.inspect}>"
     end
 
     # Delete the embedded object
+    #
     def delete
       unless new?
         __parent.embedded = nil
@@ -71,6 +72,7 @@ module Ork
     protected
 
     # Persist the object in Riak database
+    #
     def __save__
       @attributes[:_type] = model.name
 

@@ -11,7 +11,7 @@ module Ork
     # Example:
     #
     #   class Comment
-    #     include Ork::Model
+    #     include Ork::Document
     #
     #     reference :user, User # NameError undefined constant User.
     #   end
@@ -20,7 +20,7 @@ module Ork
     #   simply use a Symbol.
     #
     #   class Comment
-    #     include Ork::Model
+    #     include Ork::Document
     #
     #     reference :user, :User
     #   end

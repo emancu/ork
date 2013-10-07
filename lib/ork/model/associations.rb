@@ -6,7 +6,7 @@ module Ork::Model
     # Example:
     #
     #   class Post
-    #     include Ork::Model
+    #     include Ork::Document
     #
     #     reference :user, :User
     #   end
@@ -14,7 +14,7 @@ module Ork::Model
     #   # It's the same as:
     #
     #   class Post
-    #     include Ork::Model
+    #     include Ork::Document
     #
     #     attribute :user_id
     #     index :user_id
@@ -66,13 +66,13 @@ module Ork::Model
     #
     # Example:
     #   class Post
-    #     include Ork::Model
+    #     include Ork::Document
     #
     #     reference :user, :User
     #   end
     #
     #   class User
-    #     include Ork::Model
+    #     include Ork::Document
     #
     #     referenced :post, :Post
     #   end
@@ -80,7 +80,7 @@ module Ork::Model
     #   # is the same as
     #
     #   class User
-    #     include Ork::Model
+    #     include Ork::Document
     #
     #     def post
     #       Post.find(:user_id => self.id)
@@ -99,13 +99,13 @@ module Ork::Model
     #
     # Example:
     #   class Post
-    #     include Ork::Model
+    #     include Ork::Document
     #
     #     reference :user, :User
     #   end
     #
     #   class User
-    #     include Ork::Model
+    #     include Ork::Document
     #
     #     collection :posts, :Post
     #   end
@@ -113,7 +113,7 @@ module Ork::Model
     #   # is the same as
     #
     #   class User
-    #     include Ork::Model
+    #     include Ork::Document
     #
     #     def posts
     #       Post.find(:user_id => self.id)
@@ -128,16 +128,13 @@ module Ork::Model
       end
     end
 
-
-
-
-    # TODO: A macro for defining an attribute, an index, and an accessor
+    # A macro for defining an 
     # for a given model.
     #
     # Example:
     #
     #   class Post
-    #     include Ork::Model
+    #     include Ork::Document
     #
     #     embed :author, :Author
     #   end
@@ -145,12 +142,19 @@ module Ork::Model
     #   # It's the same as:
     #
     #   class Post
-    #     include Ork::Model
+    #     include Ork::Document
     #
+    #     def author
+    #       @embedding[:author]
+    #     end
+    #
+    #     def author=(author)
+    #       @embedding[:author] = author
+    #       author.__parent = self
+    #     end
     #   end
     #
     def embed(name, model)
-      # attributes << name unless attributes.include?(name)
       embedding << name unless embedding.include?(name)
 
       define_method(name) do
@@ -174,16 +178,37 @@ module Ork::Model
       end
     end
 
-    # TODO
+    # A macro for find embedded objects of the same type, massive assign and
+    # syntactic sugar for add an object to the collection.
     #
+    # Example:
     #
+    #   class Post
+    #     include Ork::Document
     #
+    #     embed_collection :authors, :Author
+    #   end
     #
+    #   # It's the same as:
     #
+    #   class Post
+    #     include Ork::Document
+    #
+    #     def authors
+    #       # An array of authors
+    #     end
+    #
+    #     def authors=(authors)
+    #       # Remove old authors and create an array of attributes
+    #     end
+    #
+    #     def add_author(author)
+    #       # Add an author to the embed collection
+    #     end
+    #   end
     #
     def embed_collection(name, model)
-      # attributes << name unless attributes.include?(name)
-      embedding  << name unless embedded.include?(name)
+      embedding << name unless embedded.include?(name)
 
       define_method(name) do
         #TODO: .each
