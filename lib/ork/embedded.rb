@@ -32,7 +32,7 @@ module Ork
     alias :eql? :==
 
     def new?
-      __parent.new? # FIXME
+      __parent.new?
     end
 
     # Pretty print for the model
@@ -59,31 +59,7 @@ module Ork
       false
     end
 
-    def save
-      # FIXME: Work with validations, scrivener or hatch?
-      # __parent.save if valid?
-      __parent.save
-    end
-
-    def save!
-      __parent.save!
-    end
-
     protected
-
-    # Persist the object in Riak database
-    #
-    def __save__
-      @attributes[:_type] = model.name
-
-      # __check_unique_indices
-      # __update_indices
-      __parent.save!
-
-      @attributes.delete :_type
-
-      self
-    end
 
     def __persist_attributes
       attributes = super
