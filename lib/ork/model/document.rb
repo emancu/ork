@@ -107,9 +107,17 @@ module Ork
     protected
 
     # Overwrite attributes with the persisted attributes in Riak.
+    #
     def load!(id)
-      @id = self.__robject.key = id
-      @__robject = @__robject.reload(force: true)
+      self.__robject.key = id
+      __load_robject! id, @__robject.reload(force: true)
+    end
+
+    # Transform a RObject returned by Riak into a Ork::Document.
+    #
+    def __load_robject!(id, robject)
+      @id = id
+      @__robject = robject
       @attributes = {}
       @embedding = {}
 
