@@ -31,10 +31,6 @@ module Ork
     end
     alias :eql? :==
 
-    def new?
-      __parent.new?
-    end
-
     # Pretty print for the model
     #
     #  Example:
@@ -45,19 +41,5 @@ module Ork
     def inspect
       "#<#{model} #{attributes.inspect}>"
     end
-
-    # Delete the embedded object
-    #
-    def delete
-      unless new?
-        __parent.embedded = nil
-        __parent.save!
-        @attributes.delete self.class.__parent_key
-      end
-      freeze
-    rescue Riak::FailedRequest
-      false
-    end
-
   end
 end
