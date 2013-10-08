@@ -147,18 +147,18 @@ Protest.describe 'Ork::Model' do
     end
 
     test 'different types' do
-      assert @event != 'Not an event'
+      deny @event == 'Not an event'
     end
 
     test 'saved instances with different ids' do
       @event.save
       @other.save
 
-      assert @event != @other
+      deny @event == @other
     end
 
-    test 'unsaved intances' do
-      pending 'Define how equality will be'
+    test 'unsaved intances are equal' do
+      assert @event == @other
     end
   end
 

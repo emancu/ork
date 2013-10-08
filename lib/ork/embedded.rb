@@ -23,11 +23,14 @@ module Ork
     # Check for equality by doing the following assertions:
     #
     # 1. That the passed model is of the same type.
-    # 2. That they represent the same RObject id.
+    # 2. That they have the same attributes.
+    #
+    # How it was developed, 2 implies 1.
     #
     def ==(other)
-      #FIXME: Define!
-      other.kind_of?(model) && other.__parent == __parent
+      other.kind_of?(model) &&
+        __persist_attributes == other.__persist_attributes &&
+        other.attributes[model.__parent_key] == @attributes[model.__parent_key]
     end
     alias :eql? :==
 
