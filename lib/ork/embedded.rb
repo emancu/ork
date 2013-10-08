@@ -13,11 +13,11 @@ module Ork
     end
 
     def __parent
-      @attributes[self.class.__parent_key] or raise Ork::ParentMissing
+      @attributes[model.__parent_key] or raise Ork::ParentMissing
     end
 
     def __parent=(object)
-      @attributes[self.class.__parent_key] = object
+      @attributes[model.__parent_key] = object
     end
 
     # Check for equality by doing the following assertions:
