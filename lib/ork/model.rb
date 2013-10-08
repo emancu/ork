@@ -46,7 +46,8 @@ module Ork
       attributes.delete(model.__parent_key) if model.respond_to? :__parent_key
 
       model.embedding.each do |embedded|
-        attributes[embedded] = self.send(embedded).__persist_attributes
+        object = self.send(embedded)
+        attributes[embedded] = object.__persist_attributes unless object.nil?
       end
 
       attributes
