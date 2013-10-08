@@ -1,8 +1,11 @@
+require_relative 'index'
+
 module Ork::Model
   module ClassMethods
     attr_writer :bucket_name
 
     # Syntactic sugar for Model.new(atts).save
+    #
     def create(atts = {})
       new(atts).save
     end
@@ -17,6 +20,10 @@ module Ork::Model
 
     def bucket_name
       @bucket_name ||= self.to_s.downcase
+    end
+
+    def embedding
+      @embedding ||= []
     end
 
     def indices
@@ -38,7 +45,7 @@ module Ork::Model
     #
     # Example:
     #   class User
-    #     include Ork::Model
+    #     include Ork::Document
     #
     #     attribute :name
     #   end
@@ -46,7 +53,7 @@ module Ork::Model
     #   # It's the same as:
     #
     #   class User
-    #     include Ork::Model
+    #     include Ork::Document
     #
     #     def name
     #       @attributes[:name]
@@ -121,4 +128,48 @@ module Ork::Model
       end
     end
   end
+
+  module Embedded
+    module ClassMethods
+      attr_accessor :__parent_key
+
+      # Declares parent accessors for embedded objects and set the parent key
+      #
+      # Example:
+      #   class Comment
+      #     include Ork::Embeddable
+      #
+      #     embedded :post, :Post
+      #   end
+      #
+      #   # It's the same as:
+      #
+      #   class Comment
+      #     include Ork::Embeddable
+      #
+      #     def post
+      #       @attributes[:post]
+      #     end
+      #
+      #     def post=(post)
+      #       @attributes[:post] = post
+      #     end
+      #   end
+      #
+      def embedded(name, model)
+        @__parent_key = name
+
+        define_method(name) do
+          @attributes[name]
+        end
+
+        define_method(:"#{name}=") do |object|
+          raise Ork::ParentMissing if object.nil?
+
+          @attributes[name] = object
+        end
+      end
+    end
+  end
+
 end

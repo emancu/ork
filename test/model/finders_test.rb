@@ -5,7 +5,7 @@ require 'mocha/api'
 include(Mocha::API)
 
 class Human
-  include Ork::Model
+  include Ork::Document
 
   attribute :name
   attribute :last_name

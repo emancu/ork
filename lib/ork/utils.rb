@@ -11,7 +11,7 @@ module Ork
     # Example:
     #
     #   class Comment
-    #     include Ork::Model
+    #     include Ork::Document
     #
     #     reference :user, User # NameError undefined constant User.
     #   end
@@ -20,7 +20,7 @@ module Ork
     #   simply use a Symbol.
     #
     #   class Comment
-    #     include Ork::Model
+    #     include Ork::Document
     #
     #     reference :user, :User
     #   end
@@ -28,6 +28,7 @@ module Ork
     def self.const(context, name)
       case name
       when Symbol then context.const_get(name)
+      when String then context.const_get(name.to_sym)
       else name
       end
     end

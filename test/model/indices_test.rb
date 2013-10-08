@@ -1,7 +1,7 @@
 require_relative '../helper'
 
 class Dog
-  include Ork::Model
+  include Ork::Document
 
   attribute :name
   attribute :age

@@ -26,7 +26,7 @@ module Ork::Model
     #   be used in production applications.
     #
     def all
-      bucket.keys.map{|k| load_key k}
+      load_robjects bucket.get_many(bucket.keys)
     end
     alias :list :all
 
@@ -35,7 +35,7 @@ module Ork::Model
     # Example:
     #
     #   class User
-    #     include Ork::Model
+    #     include Ork::Document
     #
     #     attribute :name
     #     index :name
@@ -55,7 +55,7 @@ module Ork::Model
       raise Ork::IndexNotFound unless indices.has_key? by_index
 
       index = indices[by_index]
-      bucket.get_index(index.riak_name, value).map{|k| load_key k}
+      load_robjects bucket.get_many(bucket.get_index(index.riak_name, value))
     end
 
     private
@@ -64,6 +64,12 @@ module Ork::Model
       new.send(:load!, id)
     rescue Riak::FailedRequest => e
       raise e unless e.not_found?
+    end
+
+    def load_robjects(robjects)
+      robjects.map do |id, robject|
+        new.send(:__load_robject!, id, robject)
+      end
     end
 
   end

@@ -44,7 +44,7 @@ Take a look at the example below:
 
 ```ruby
 class Post
-  include Ork::Model
+  include Ork::Document
 
   attribute :name
   attribute :age, default: 18
@@ -54,7 +54,7 @@ class Post
 end
 
 class Comment
-  include Ork::Model
+  include Ork::Document
 
   attribute :text
   reference :post, :Post
