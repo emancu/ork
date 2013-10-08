@@ -5,7 +5,7 @@ require 'mocha/api'
 include(Mocha::API)
 
 class Event
-  include Ork::Model
+  include Ork::Document
 
   attribute :name
   attribute :location
@@ -127,6 +127,15 @@ Protest.describe 'Ork::Model' do
         Riak::RObject.any_instance.unstub(:delete)
       end
     end
+
+    context 'Persistence' do
+      test 'persist the type of the object' do
+        event = Event.new(name: 'Ruby')
+
+        assert event.send(:__persist_attributes).has_key? '_type'
+        assert_equal 'Event', event.send(:__persist_attributes)['_type']
+      end
+    end
   end
 
   context 'Equality' do
@@ -138,29 +147,29 @@ Protest.describe 'Ork::Model' do
     end
 
     test 'different types' do
-      assert @event != 'Not an event'
+      deny @event == 'Not an event'
     end
 
     test 'saved instances with different ids' do
       @event.save
       @other.save
 
-      assert @event != @other
+      deny @event == @other
     end
 
-    test 'unsaved intances' do
-      pending 'Define how equality will be'
+    test 'unsaved intances are equal' do
+      assert @event == @other
     end
   end
 
   context "Attribute's options" do
     context '*default*' do
       setup do
-        Event.send(:attribute, :age, default: 18)
+        Event.send(:attribute, :invited, default: 18)
       end
 
       test 'have a defaults hash' do
-        assert_equal ({age: 18}), Event.defaults
+        assert_equal ({invited: 18}), Event.defaults
       end
 
       test 'when no default defined nil is assigned as first value' do
@@ -168,7 +177,7 @@ Protest.describe 'Ork::Model' do
       end
 
       test 'set the default value defined' do
-        assert_equal 18, Event.new.age
+        assert_equal 18, Event.new.invited
       end
     end
 
@@ -210,6 +219,6 @@ Protest.describe 'Ork::Model' do
         assert !event.respond_to?(:weird?)
       end
     end
-
   end
+
 end

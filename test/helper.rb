@@ -25,3 +25,7 @@ def randomize_bucket_name(klass)
     rand(36**10).to_s(36)
   ].join('-')
 end
+
+def deny(condition, message="Expected condition to be unsatisfied")
+  assert !condition, message
+end

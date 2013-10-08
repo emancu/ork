@@ -6,7 +6,7 @@ module Ork::Model
     # Example:
     #
     #   class Post
-    #     include Ork::Model
+    #     include Ork::Document
     #
     #     reference :user, :User
     #   end
@@ -14,7 +14,7 @@ module Ork::Model
     #   # It's the same as:
     #
     #   class Post
-    #     include Ork::Model
+    #     include Ork::Document
     #
     #     attribute :user_id
     #     index :user_id
@@ -66,13 +66,13 @@ module Ork::Model
     #
     # Example:
     #   class Post
-    #     include Ork::Model
+    #     include Ork::Document
     #
     #     reference :user, :User
     #   end
     #
     #   class User
-    #     include Ork::Model
+    #     include Ork::Document
     #
     #     referenced :post, :Post
     #   end
@@ -80,7 +80,7 @@ module Ork::Model
     #   # is the same as
     #
     #   class User
-    #     include Ork::Model
+    #     include Ork::Document
     #
     #     def post
     #       Post.find(:user_id => self.id)
@@ -99,13 +99,13 @@ module Ork::Model
     #
     # Example:
     #   class Post
-    #     include Ork::Model
+    #     include Ork::Document
     #
     #     reference :user, :User
     #   end
     #
     #   class User
-    #     include Ork::Model
+    #     include Ork::Document
     #
     #     collection :posts, :Post
     #   end
@@ -113,7 +113,7 @@ module Ork::Model
     #   # is the same as
     #
     #   class User
-    #     include Ork::Model
+    #     include Ork::Document
     #
     #     def posts
     #       Post.find(:user_id => self.id)
@@ -125,6 +125,102 @@ module Ork::Model
         return [] if self.id.nil?
         model = Ork::Utils.const(self.class, model)
         model.find(:"#{reference}_id", self.id)
+      end
+    end
+
+    # A macro for defining an 
+    # for a given model.
+    #
+    # Example:
+    #
+    #   class Post
+    #     include Ork::Document
+    #
+    #     embed :author, :Author
+    #   end
+    #
+    #   # It's the same as:
+    #
+    #   class Post
+    #     include Ork::Document
+    #
+    #     def author
+    #       @embedding[:author]
+    #     end
+    #
+    #     def author=(author)
+    #       @embedding[:author] = author
+    #       author.__parent = self
+    #     end
+    #   end
+    #
+    def embed(name, model)
+      embedding << name unless embedding.include?(name)
+
+      define_method(name) do
+        return nil unless @embedding.has_key? name
+        @_memo[name] ||= begin
+                           model = Ork::Utils.const(self.class, model)
+                           model.new(@embedding[name])
+                         end
+      end
+
+      define_method(:"#{name}=") do |object|
+        unless object.respond_to?(:embeddable?) && object.embeddable?
+          raise Ork::NotAnEmbeddableObject.new(object)
+        end
+
+        @_memo.delete(name)
+        @embedding[name] = object.attributes
+        object.__parent = self
+
+        object
+      end
+    end
+
+    # A macro for find embedded objects of the same type, massive assign and
+    # syntactic sugar for add an object to the collection.
+    #
+    # Example:
+    #
+    #   class Post
+    #     include Ork::Document
+    #
+    #     embed_collection :authors, :Author
+    #   end
+    #
+    #   # It's the same as:
+    #
+    #   class Post
+    #     include Ork::Document
+    #
+    #     def authors
+    #       # An array of authors
+    #     end
+    #
+    #     def add_author(author)
+    #       # Add an author to the embed collection
+    #     end
+    #   end
+    #
+    def embed_collection(name, model)
+      embedding << name unless embedding.include?(name)
+
+      define_method(name) do
+        return [] unless @embedding.has_key? name
+
+        @_memo[name] ||= begin
+                           model = Ork::Utils.const(self.class, model)
+                           @embedding[name].map{|atts| model.new atts}
+                         end
+      end
+
+      define_method(:"add_#{name}") do |object|
+        raise Ork::NotAnEmbeddableObject.new(object) unless object.embeddable?
+
+        object.__parent = self
+        @_memo[name] << object unless @_memo[name].nil?
+        @embedding[name] = Array(@embedding[name]) << object.attributes
       end
     end
 
