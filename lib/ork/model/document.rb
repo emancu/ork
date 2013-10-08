@@ -125,7 +125,9 @@ module Ork
       embedded_data = {}
 
       model.embedding.each do |embedded|
-        embedded_data[embedded] = data.delete embedded.to_s
+        if d = data.delete(embedded.to_s)
+          embedded_data[embedded] = d
+        end
       end
 
       update_attributes data

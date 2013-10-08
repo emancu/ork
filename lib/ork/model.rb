@@ -34,8 +34,15 @@ module Ork
     #
     def update_embedded_attributes(atts)
       atts.each do |att, val|
-        model = Ork::Utils.const(self.class, val.delete('_type'))
-        send(:"#{att}=", model.new(val))
+        if val.is_a? Array
+          val.each do |object_atts|
+            model = Ork::Utils.const(self.class, object_atts.delete('_type'))
+            send(:"add_#{att}", model.new(object_atts))
+          end
+        else
+          model = Ork::Utils.const(self.class, val.delete('_type'))
+          send(:"#{att}=", model.new(val))
+        end
       end
     end
 
@@ -47,7 +54,13 @@ module Ork
 
       model.embedding.each do |embedded|
         object = self.send(embedded)
-        attributes[embedded] = object.__persist_attributes unless object.nil?
+        unless object.nil?
+          attributes[embedded] = if object.is_a? Array
+                                   object.map{|o| o.send :__persist_attributes}
+                                 else
+                                   object.__persist_attributes
+                                 end
+        end
       end
 
       attributes

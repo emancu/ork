@@ -15,6 +15,10 @@ Protest.describe 'embed' do
     embedded :note, :Note
   end
 
+  setup do
+    randomize_bucket_name Note
+  end
+
   should 'return nil when there is no embedded object' do
     note = Note.new
 

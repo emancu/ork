@@ -198,38 +198,27 @@ module Ork::Model
     #       # An array of authors
     #     end
     #
-    #     def authors=(authors)
-    #       # Remove old authors and create an array of attributes
-    #     end
-    #
     #     def add_author(author)
     #       # Add an author to the embed collection
     #     end
     #   end
     #
     def embed_collection(name, model)
-      embedding << name unless embedded.include?(name)
+      embedding << name unless embedding.include?(name)
 
       define_method(name) do
-        #TODO: .each
+        return [] unless @embedding.has_key? name
+
         @_memo[name] ||= begin
                            model = Ork::Utils.const(self.class, model)
-                           model.new(@embedding[name])
+                           @embedding[name].map{|atts| model.new atts}
                          end
-      end
-
-      define_method(:"#{name}=") do |objects|
-        if document = objects.detect{|o| !o.embeddable?}
-          raise Ork::NotAnEmbeddableObject.new(document)
-        end
-
-        @_memo.delete(name)
-        @embedding[name] = objects.map(&:attributes)
       end
 
       define_method(:"add_#{name}") do |object|
         raise Ork::NotAnEmbeddableObject.new(object) unless object.embeddable?
 
+        object.__parent = self
         @_memo[name] << object unless @_memo[name].nil?
         @embedding[name] = Array(@embedding[name]) << object.attributes
       end

@@ -15,6 +15,10 @@ Protest.describe 'embedded' do
     embedded :note, :Note
   end
 
+  setup do
+    randomize_bucket_name Note
+  end
+
   should 'be embeddable' do
     assert Annotation.new.embeddable?
   end
