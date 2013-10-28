@@ -15,12 +15,6 @@ Install dependencies using `dep` is easy as run:
 
     dep install
 
-### Development and Testing dependencies
-
-Use the special dependencies file:
-
-    dep install -f .gems-test
-
 ## Installation
 
 Install [Riak](http://basho.com/riak/) with your package manager:
@@ -29,7 +23,7 @@ Install [Riak](http://basho.com/riak/) with your package manager:
 
 Or download it from [Riak's download page](http://docs.basho.com/riak/latest/downloads/)
 
-Once you have it installed, you can execute `riak start` and it will run on `localhost:8098` by default. 
+Once you have it installed, you can execute `riak start` and it will run on `localhost:8098` by default.
 
 If you don't have Ork, try this:
 
@@ -71,24 +65,29 @@ It also gives you some helpful **class methods**:
 | attributes   | `Array` Attributes declared                      | `[:name, :age]`          |
 | indices      | `Array` Indices declared                         | `[:age]`                 |
 | uniques      | `Array` Unique indices declared                  | `[:name]`                |
+| embedding    | `Array` Embedded attributes declared             | `[:post]`                |
 | defaults     | `Hash` Defaults for attributes                   | `{:age=>18}`             |
 
 
 And for **instance methods** it defines:
 
-| Instance Method           | Description                                     |
-|:--------------------------|:------------------------------------------------|
-| new?                      | `Bool` Answer if its a new instance or not.     |
-| update(_attr_)            | `Bool` Update model attributes and save it.     |
-| update_attributes(_attr_) | `Array` Update model attributes.                |
-| delete                    | `Bool` Delete the model from Riak.              |
-| save                      | `Bool` Validate model and persist.              |
-| save!                     | `Bool` Persist model without validate.          |
-| reload                    | `<class>` Preload all the attributes from Riak. |
+| Instance Method                    | Description                                       |
+|:-----------------------------------|:--------------------------------------------------|
+| new?                               | `Bool` Answer if its a new instance or not.       |
+| embeddable?                        | `Bool` Answer if its an embeddable object or not. |
+| update(_attr_)                     | `Bool` Update model attributes and save it.       |
+| update_attributes(_attr_)          | `Array` Update model attributes.                  |
+| update_embedded_attributes(_attr_) | `Array` Update embedded model attributes.         |
+| reload                             | `<class>` Preload all the attributes from Riak.   |
+| save                               | `Bool` Persist document.                          |
+| delete                             | `Bool` Delete the document from Riak.             |
 
 
 
 # Modeling
+> Embeddable objects are those with `include Ork::Embeddable` and they can not be saved
+> without a parent.
+
 
 Core behaviour of `Ork::Model`.
 
@@ -125,7 +124,50 @@ reference :user, :User
 
 Provides an accessor to search for _one_ model that `reference` the current model.
 
+```ruby
+referenced :comment, :Comment
+```
 
 ## collection
 
 Provides an accessor to search for _all_ models that `reference` the current model.
+
+```ruby
+collection :comments, :Comment
+```
+
+## embed
+> Only accepts embeddable objects.
+
+It's a special kind of attribute that embeds another model.
+Internally, Ork will keep the object as an attribute, but you get
+accessors that give you real instances.
+
+```ruby
+embed :comment, :Comment
+```
+
+## embed_collection
+> Only accepts embeddable objects.
+
+Provides an accessor for _all_ models that are `embedded` into the current model.
+It also provides a method for _adding_ objects to this collection.
+
+```ruby
+embed_collection :comments, :Comment
+
+# It provides
+def add_comments(a_comment)
+  # code
+end
+```
+
+
+## embedded
+> Only for embeddable objects.
+
+Provides an accessor to the object that `embeds` the current model.
+
+```ruby
+embedded :post, :Post
+```
