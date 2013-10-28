@@ -65,6 +65,7 @@ Protest.describe 'collection' do
 
     comment.post = post
     comment.save
+    post.reload
 
     assert !post.comments.empty?
     assert_equal [comment], post.comments

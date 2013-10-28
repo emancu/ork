@@ -111,6 +111,7 @@ module Ork
       @__robject = robject
       @attributes = {}
       @embedding = {}
+      @_memo = {}
 
       data = @__robject.data
       embedded_data = {}

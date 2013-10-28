@@ -50,8 +50,8 @@ module Ork::Model
       end
 
       define_method(:"#{name}=") do |value|
-        @_memo.delete(name)
         send(writer, value ? value.id : nil)
+        @_memo[name] = value
       end
 
       define_method(name) do
@@ -90,8 +90,10 @@ module Ork::Model
     def referenced(name, model, reference = to_reference)
       define_method name do
         return nil if self.id.nil?
-        model = Ork::Utils.const(self.class, model)
-        model.find(:"#{reference}_id", self.id).first
+        @_memo[name] ||= begin
+                           model = Ork::Utils.const(self.class, model)
+                           model.find(:"#{reference}_id", self.id).first
+                         end
       end
     end
 
@@ -123,12 +125,14 @@ module Ork::Model
     def collection(name, model, reference = to_reference)
       define_method name do
         return [] if self.id.nil?
-        model = Ork::Utils.const(self.class, model)
-        model.find(:"#{reference}_id", self.id)
+        @_memo[name] ||= begin
+                           model = Ork::Utils.const(self.class, model)
+                           model.find(:"#{reference}_id", self.id)
+                         end
       end
     end
 
-    # A macro for defining an 
+    # A macro for defining an attribute, and the accessors
     # for a given model.
     #
     # Example:
@@ -170,11 +174,10 @@ module Ork::Model
           raise Ork::NotAnEmbeddableObject.new(object)
         end
 
-        @_memo.delete(name)
         @embedding[name] = object.attributes
         object.__parent = self
 
-        object
+        @_memo[name] = object
       end
     end
 
