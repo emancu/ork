@@ -44,7 +44,7 @@ Protest.describe 'Indices' do
     Dog.create(age: 14)
     dog = Dog.new(name: 'Unsaved', age: 14)
     begin
-      dog.save!
+      dog.save
     rescue Ork::UniqueIndexViolation => e
     ensure
       assert_equal 1, Dog.all.size

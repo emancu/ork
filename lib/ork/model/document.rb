@@ -58,37 +58,28 @@ module Ork
     # Persist the model attributes and update indices and unique
     # indices.
     #
-    # If the model is not valid, nil is returned. Otherwise, the
-    # persisted model is returned.
-    #
     # Example:
     #
     #   class User
     #     include Ork::Document
     #
     #     attribute :name
-    #
-    #     def validate
-    #       assert_present :name
-    #     end
     #   end
-    #
-    #   User.new(:name => nil).save
-    #   # => nil
     #
     #   u = User.new(:name => "John").save
     #   # => #<User:6kS5VHNbaed9h7gFLnVg5lmO4U7 {:name=>"John"}>
     #
     def save
-      # FIXME: Work with validations, scrivener or hatch?
-      # save! if valid?
-      save!
-    end
+      __robject.content_type = 'application/json'
+      __robject.data = __persist_attributes
 
-    # Saves the model without checking for validity.
-    # Refer to `Model#save` for more details.
-    def save!
-      __save__
+      __check_unique_indices
+      __update_indices
+      __robject.store
+
+      @id = __robject.key
+
+      self
     end
 
     # Preload all the attributes of this model from Riak.
@@ -132,20 +123,6 @@ module Ork
 
       update_attributes data
       update_embedded_attributes embedded_data
-
-      self
-    end
-
-    # Persist the object in Riak database
-    def __save__
-      __robject.content_type = 'application/json'
-      __robject.data = __persist_attributes
-
-      __check_unique_indices
-      __update_indices
-      __robject.store
-
-      @id = __robject.key
 
       self
     end
