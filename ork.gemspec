@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = 'ork'
-  s.version     = '0.0.1'
+  s.version     = '0.1.0'
   s.date        = Time.now.strftime('%Y-%m-%d')
   s.summary     = 'Ruby modeling layer for Riak.'
   s.description = 'Ork is a small Ruby modeling layer for Riak, inspired by Ohm.'
