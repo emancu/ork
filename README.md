@@ -172,6 +172,18 @@ Provides an accessor to the object that `embeds` the current model.
 embedded :post, :Post
 ```
 
-## Tools
+## Validations
+
+As you can see, there is no reference to validations in this document and I'm aware of that!
+The validation logic for _nested embedded objects_ makes the code more complex than I want.
+Given that I want to keep this gem as simple as I can, I decided to avoid _object validation_ logic here and promote the use of other gems. 
+
+There are good implementations for object validation like [hatch](https://github.com/tonchis/hatch) or [scrivener](https://github.com/soveran/scrivener) which they do a great job!
+If you don't know them, you should take a look, but remember that you are free to use your prefered _gem_ or even your own method!
+
+Just remember to check if an object is _valid_ __before__ you _save_ it.
+
+
+# Tools
 
 * `rekon` - A visual browser for **riak**, built as a [riak app](https://github.com/basho/rekon).
