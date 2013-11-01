@@ -171,3 +171,7 @@ Provides an accessor to the object that `embeds` the current model.
 ```ruby
 embedded :post, :Post
 ```
+
+## Tools
+
+* `rekon` - A visual browser for **riak**, built as a [riak app](https://github.com/basho/rekon).
