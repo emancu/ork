@@ -38,6 +38,15 @@ module Ork::Model
       @defaults ||= {}
     end
 
+    # When a value is given, sets the content_type of the object.
+    # When the parameter is nil, it will return the content_type.
+    # It also sets as default the standard content_type.
+    #
+    def content_type(type = nil)
+      @content_type = type unless type.nil?
+      @content_type ||= 'application/json'
+    end
+
     protected
 
     # Declares persisted attributes.
