@@ -30,6 +30,16 @@ Protest.describe 'Ork::Model' do
       assert event.respond_to? :location=
     end
 
+    test 'model content type by default' do
+      assert_equal 'application/json', Event.content_type
+    end
+
+    test 'model can change content type' do
+      Event.content_type 'text/plain'
+      assert_equal 'text/plain', Event.content_type
+      Event.content_type 'application/json' # Restore content_type
+    end
+
     test 'model can change bucket name' do
       Event.bucket_name= 'other_bucket_for_event'
       assert_equal 'other_bucket_for_event', Event.bucket_name
@@ -134,6 +144,14 @@ Protest.describe 'Ork::Model' do
 
         assert event.send(:__persist_attributes).has_key? '_type'
         assert_equal 'Event', event.send(:__persist_attributes)['_type']
+      end
+
+      test 'persist the object with different content-type' do
+        Event.content_type 'text/plain'
+        event = Event.create(name: 'Ruby')
+
+        assert_equal 'text/plain', event.send(:__robject).content_type
+        Event.content_type 'application/json'
       end
     end
   end
