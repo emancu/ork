@@ -70,7 +70,7 @@ module Ork
     #   # => #<User:6kS5VHNbaed9h7gFLnVg5lmO4U7 {:name=>"John"}>
     #
     def save
-      __robject.content_type = 'application/json'
+      __robject.content_type = model.content_type
       __robject.data = __persist_attributes
 
       __check_unique_indices
