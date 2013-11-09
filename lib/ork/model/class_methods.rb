@@ -42,6 +42,13 @@ module Ork::Model
     # When the parameter is nil, it will return the content_type.
     # It also sets as default the standard content_type.
     #
+    # Example:
+    #   class User
+    #     include Ork:Document
+    #
+    #     content_type 'text/plain'
+    #   end
+    #
     def content_type(type = nil)
       @content_type = type unless type.nil?
       @content_type ||= 'application/json'
