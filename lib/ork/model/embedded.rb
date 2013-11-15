@@ -1,4 +1,4 @@
-require_relative 'model'
+require_relative '../model'
 
 module Ork
   module Embeddable
