@@ -22,7 +22,7 @@ module Ork::Model
     alias :exists? :exist?
 
     # Find all documents in the Document's bucket and return them.
-    #   @return [Array<Document>] all found documents in the bucket
+    #   @return Ork::ResultSet<Document> all found documents in the bucket
     #
     # @Note: This operation is incredibly expensive and should not
     #   be used in production applications.
@@ -33,6 +33,7 @@ module Ork::Model
     alias :list :all
 
     # Find values in indexed fields.
+    #   @return Ork::ResultSet<Document> found documents in the bucket
     #
     # options - Hash configs for pagination.
     #   :max_results  - Number

@@ -8,17 +8,26 @@ module Ork
     def_delegators :keys, :size, :count, :length, :empty?
     def_delegators :all, :each, :first, :last
 
+    def initialize(model, index, query, options={})
+      @model, @index, @query, @options = model, index, query, options
+      @bucket = @model.bucket
+    end
+
+    # Find all documents in the Document's bucket and return them.
+    #   @return Ork::ResultSet<Document> all the documents in the bucket
+    #
+    # @Note: This operation is incredibly expensive and should not
+    #   be used in production applications.
+    #
     def self.all(model)
       new(model, nil, nil).tap do |r|
         r.instance_variable_set(:@keys, model.bucket.keys)
       end
     end
 
-    def initialize(model, index, query, options={})
-      @model, @index, @query, @options = model, index, query, options
-      @bucket = @model.bucket
-    end
-
+    # Pretty print for the ResultSet
+    # It uses keys when the objects are not present.
+    #
     def inspect
       string = "#<#{self.class}:#{@options} %s>"
 
@@ -26,6 +35,7 @@ module Ork
     end
 
     # Get the array of matched keys
+    #
     def keys(&block)
       @keys ||=
         @bucket.client.backend do |b|
@@ -34,12 +44,14 @@ module Ork
     end
 
     # Get the array of objects
+    #
     def all
       return if self.keys.nil?
       @all ||= load_robjects @bucket.get_many(@keys)
     end
 
     # Get a new ResultSet fetch for the next page
+    #
     def next_page
       raise Ork::NoNextPage unless has_next_page?
 
@@ -50,6 +62,7 @@ module Ork
     end
 
     # Determine whether a SecondaryIndex fetch has a next page available
+    #
     def has_next_page?
       keys.respond_to?(:continuation) && !!keys.continuation
     end
