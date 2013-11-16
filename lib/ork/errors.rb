@@ -5,4 +5,6 @@ module Ork
 
   class NotAnEmbeddableObject < RuntimeError; end
   class ParentMissing < RuntimeError; end
+
+  class NoNextPage < Error; end
 end

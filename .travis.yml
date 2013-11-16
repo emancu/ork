@@ -3,12 +3,15 @@ rvm:
   - 1.9.3
   - 2.0.0
 
-services:
-  - riak
-
 before_install:
+  - curl http://apt.basho.com/gpg/basho.apt.key | sudo apt-key add -
+  - sudo bash -c "echo deb http://apt.basho.com $(lsb_release -sc) main > /etc/apt/sources.list.d/basho.list"
+  - sudo apt-get update
   - gem install dep
   - ulimit -n 4096
 
 install:
+  - yes n | sudo apt-get install riak
+  - sudo service riak start
+  - riak version
   - dep install

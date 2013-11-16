@@ -61,24 +61,47 @@ Protest.describe 'Finders' do
       assert Human.find(:name, 'Diego').empty?
     end
 
-    test 'return an array with the objects found' do
+    test 'return a ResultSet with the objects found' do
       men = Human.create(name: 'Diego')
+      find = Human.find(:name, 'Diego')
 
-      assert !Human.find(:name, 'Diego').empty?
-      assert_equal [men], Human.find(:name, 'Diego')
+      assert_equal Ork::ResultSet, find.class
+      assert_equal [men], find.all
+      deny find.empty?
     end
 
     test 'update indices on save' do
       men = Human.create(name: 'Diego')
 
-      assert !Human.find(:name, 'Diego').empty?
-      assert  Human.find(:name, 'Belen').empty?
+      deny   Human.find(:name, 'Diego').empty?
+      assert Human.find(:name, 'Belen').empty?
 
       men.update(name: 'Belen')
 
-      assert  Human.find(:name, 'Diego').empty?
-      assert !Human.find(:name, 'Belen').empty?
+      assert Human.find(:name, 'Diego').empty?
+      deny Human.find(:name, 'Belen').empty?
     end
 
+    context 'pagination' do
+      test 'returns the max results specified' do
+        men = Human.create(name: 'Diego')
+        old_men = Human.create(name: 'Diego', last_name: 'Dominguez')
+
+        find = Human.find(:name, 'Diego', max_results: 1)
+
+        assert_equal 1, find.size
+        assert find.has_next_page?
+      end
+
+      test 'returns all the results when no max_results specified' do
+        men = Human.create(name: 'Diego')
+        old_men = Human.create(name: 'Diego', last_name: 'Dominguez')
+
+        find = Human.find(:name, 'Diego')
+
+        assert_equal 2, find.size
+        deny find.has_next_page?
+      end
+    end
   end
 end

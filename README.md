@@ -172,11 +172,61 @@ Provides an accessor to the object that `embeds` the current model.
 embedded :post, :Post
 ```
 
+## Pagination
+
+Pagination is a key feature introduced in _Riak 1.4_ and it is supported as well!
+
+`Ork` will return the _enumerable_ `Ork::ResultSet` object which stores the keys and also the resulting objects.
+The __keys__ are immediately loaded, but the __objects__ will be lazy loaded.
+
+Given it uses the same API than `riak_client` let's jump into the examples.
+
+```ruby
+
+resultset = Post.find(:age, 19, max_results: 3)
+# => #<Ork::ResultSet:{:max_results=>3} ['object_key_1', 'object_key_2', 'object_key_3']>
+
+resultset.keys
+# => ['object_key_1', 'object_key_2', 'object_key_3']
+
+resultset.all
+# => [#<Post:1 ...>, #<Post:2 ...>, #<Post:3 ...>]
+
+##
+# Advance to next page
+##
+
+resultset.has_next_page?
+# => true
+
+next_resultset = resultset.next_page
+# => #<Ork::ResultSet:{:max_results=>3, :continuation=>'a_continuation_string'}
+#    ['object_key_4', 'object_key_5']>
+
+next_resultset.has_next_page?
+# => false
+
+next_resultset.next_page
+# => raises Ork::NoNextPage: There is no next page
+
+##
+# Skip pages and start from a continuation
+##
+
+resultset2 = Post.find(:age, 19, max_results: 3, continuation: 'a_continuation_string')
+# => #<Ork::ResultSet:{:max_results=>3, :continuation=>'a_continuation_string'}
+#    ['object_key_4', 'object_key_5']>
+
+resultset2 == resultset.next_page
+# => true
+
+```
+
 ## Validations
 
 As you can see, there is no reference to validations in this document and I'm aware of that!
 The validation logic for _nested embedded objects_ makes the code more complex than I want.
-Given that I want to keep this gem as simple as I can, I decided to avoid _object validation_ logic here and promote the use of other gems. 
+Given that I want to keep this gem as simple as I can, I decided to avoid _object validation_ logic here and promote the use of other gems.
 
 There are good implementations for object validation like [hatch](https://github.com/tonchis/hatch) or [scrivener](https://github.com/soveran/scrivener) which they do a great job!
 If you don't know them, you should take a look, but remember that you are free to use your prefered _gem_ or even your own method!

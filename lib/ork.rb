@@ -1,12 +1,13 @@
 require 'ork/connection'
 require 'ork/model'
 require 'ork/model/document'
-require 'ork/embedded'
+require 'ork/model/embedded'
 require 'ork/utils'
 require 'ork/errors'
 require "riak"
 
 module Ork
+  VERSION = "0.1.2"
 
   def self.conn
     @conn ||= Ork::Connection.new

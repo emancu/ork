@@ -19,6 +19,6 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'riak-client'
   s.add_development_dependency 'protest'
-  s.add_development_dependency 'toml-rb'
+  s.add_development_dependency 'mocha'
 end
 
