@@ -53,7 +53,7 @@ module Ork
     # Get a new ResultSet fetch for the next page
     #
     def next_page
-      raise Ork::NoNextPage unless has_next_page?
+      raise Ork::NoNextPage.new 'There is no next page' unless has_next_page?
 
       self.class.new(@model,
                      @index,
