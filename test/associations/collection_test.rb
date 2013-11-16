@@ -32,7 +32,7 @@ Protest.describe 'collection' do
     post = Post.new
 
     assert post.respond_to?(:comments)
-    assert !post.respond_to?(:comments=)
+    deny   post.respond_to?(:comments=)
   end
 
   test 'return the array of Comments referencing this Post' do
@@ -41,7 +41,7 @@ Protest.describe 'collection' do
     comment2 = Comment.create post: post, text: 'two'
     post.reload
 
-    assert !post.comments.empty?
+    deny   post.comments.empty?
     assert post.comments.include?(comment1)
     assert post.comments.include?(comment2)
   end
@@ -52,7 +52,7 @@ Protest.describe 'collection' do
     comment2 = Comment.create weird_post: post, text: 'two'
     post.reload
 
-    assert !post.weird_comments.empty?
+    deny   post.weird_comments.empty?
     assert post.weird_comments.include?(comment1)
     assert post.weird_comments.include?(comment2)
   end
@@ -67,8 +67,8 @@ Protest.describe 'collection' do
     comment.save
     post.reload
 
-    assert !post.comments.empty?
-    assert_equal [comment], post.comments
+    deny         post.comments.empty?
+    assert_equal [comment], post.comments.all
   end
 end
 
