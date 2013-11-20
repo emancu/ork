@@ -7,6 +7,8 @@
 
 Ork is a small Ruby modeling layer for **Riak** database, inspired by [Ohm](http://ohm.keyvalue.org).
 
+![Ork](http://f.cl.ly/items/2x2O0s3U0v2U0B3N313F/Ork.png)
+
 ## Dependencies
 
 `ork` requires Ruby 1.9 or later and the `riak-client` gem to connect to **Riak**.
