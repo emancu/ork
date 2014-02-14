@@ -37,7 +37,7 @@ module Ork
         if val.is_a? Array
           val.each do |object_atts|
             model = Ork::Utils.const(self.class, object_atts.delete('_type'))
-            send(:"add_#{att}", model.new(object_atts))
+            send(:"#{att}_add", model.new(object_atts))
           end
         else
           model = Ork::Utils.const(self.class, val.delete('_type'))

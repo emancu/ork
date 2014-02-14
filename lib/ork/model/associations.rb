@@ -201,7 +201,7 @@ module Ork::Model
     #       # An array of authors
     #     end
     #
-    #     def add_author(author)
+    #     def authors_add(author)
     #       # Add an author to the embed collection
     #     end
     #   end
@@ -218,7 +218,7 @@ module Ork::Model
                          end
       end
 
-      define_method(:"add_#{name}") do |object|
+      define_method(:"#{name}_add") do |object|
         raise Ork::NotAnEmbeddableObject.new(object) unless object.embeddable?
 
         object.__parent = self
