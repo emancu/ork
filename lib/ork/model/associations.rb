@@ -186,7 +186,7 @@ module Ork::Model
         return nil unless @embedding.has_key? name
         @_memo[name] ||= begin
                            model = Ork::Utils.const(self.class, model)
-                           model.new(@embedding[name])
+                           new_embedded model, @embedding[name]
                          end
       end
 
@@ -235,7 +235,9 @@ module Ork::Model
 
         @_memo[name] ||= begin
                            model = Ork::Utils.const(self.class, model)
-                           @embedding[name].map{|atts| model.new atts}
+                           @embedding[name].map do |atts|
+                             new_embedded model, atts
+                           end
                          end
       end
 
