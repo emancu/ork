@@ -14,6 +14,7 @@ require "rubygems"
 require "protest"
 require "ork"
 
+I18n.enforce_available_locales = false
 Riak.disable_list_keys_warnings = true
 Protest.report_with(:progress)
 
