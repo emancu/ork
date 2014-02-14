@@ -31,6 +31,14 @@ Protest.describe 'reference' do
     end
   end
 
+  test 'defines the attribute post_id' do
+    comment = Comment.new
+
+    assert Comment.attributes.include? :post_id
+    assert comment.respond_to?(:post_id)
+    assert comment.respond_to?(:post_id=)
+  end
+
   should 'return the object referenced' do
     post = Post.create name: 'New'
     comment = Comment.new post: post

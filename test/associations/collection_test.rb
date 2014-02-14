@@ -28,12 +28,18 @@ Protest.describe 'collection' do
     assert post.comments.empty?
   end
 
+  test 'defines the attribute comments_ids' do
+    post = Post.new
+
+    assert Post.attributes.include? :comments_ids
+    assert post.respond_to?(:comments_ids)
+    assert post.respond_to?(:comments_ids=)
+  end
+
   test 'defines reader method but not a writer method' do
     post = Post.new
 
     assert post.respond_to?(:comments_add)
-    assert post.respond_to?(:comments_ids)
-    assert post.respond_to?(:comments_ids=)
     assert post.respond_to?(:comments)
     deny   post.respond_to?(:comments=)
   end
