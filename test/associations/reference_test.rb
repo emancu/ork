@@ -26,8 +26,7 @@ Protest.describe 'reference' do
   end
 
   should 'raise an exception assigning an object of the wrong type' do
-    pending 'Not sure to support this'
-    assert_raise(Error) do
+    assert_raise(Ork::InvalidClass) do
       Comment.new post: 'Not a post'
     end
   end

@@ -35,7 +35,13 @@ Protest.describe 'collection' do
     deny   post.respond_to?(:comments=)
   end
 
-  test 'return the array of Comments referencing this Post' do
+  test 'raise an exception assigning an object of the wrong type' do
+    assert_raise(Ork::InvalidClass) do
+      Post.new.comments_add 'Not a comment'
+    end
+  end
+
+  test 'return the array of Comments assigned to this Post' do
     post = Post.create name: 'New'
     comment1 = Comment.create post: post, text: 'one'
     comment2 = Comment.create post: post, text: 'two'
