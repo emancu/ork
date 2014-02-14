@@ -27,14 +27,14 @@ Protest.describe 'embed_collection' do
   test 'defines reader method but not a writer method' do
     assert @note.respond_to?(:annotations)
     deny   @note.respond_to?(:annotations=)
-    assert @note.respond_to?(:add_annotations)
+    assert @note.respond_to?(:annotations_add)
   end
 
   test 'add a Annotation to the collection associates the object with the parent' do
     assert @note.annotations.empty?
 
     annotation = Annotation.new text: 'Adding annotation'
-    @note.add_annotations annotation
+    @note.annotations_add annotation
 
     assert_equal @note, annotation.__parent
   end
@@ -43,8 +43,8 @@ Protest.describe 'embed_collection' do
     annotation1 = Annotation.new text: 'One'
     annotation2 = Annotation.new text: 'Two'
 
-    @note.add_annotations(annotation1)
-    @note.add_annotations(annotation2)
+    @note.annotations_add(annotation1)
+    @note.annotations_add(annotation2)
 
     deny   @note.annotations.empty?
     assert @note.annotations.include?(annotation1)
@@ -55,8 +55,8 @@ Protest.describe 'embed_collection' do
     annotation1 = Annotation.new text: 'One'
     annotation2 = Annotation.new text: 'Two'
 
-    @note.add_annotations(annotation1)
-    @note.add_annotations(annotation2)
+    @note.annotations_add(annotation1)
+    @note.annotations_add(annotation2)
     @note.save
     @note.reload
 

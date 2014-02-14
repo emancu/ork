@@ -50,9 +50,19 @@ Protest.describe 'Finders' do
   context '*all*' do
     test 'list all the objects' do
       human2 = Human.create(name: 'Cacho', last_name: 'Castaña')
+
       assert_equal 2, Human.all.size
       assert Human.list.include?(@human1)
       assert Human.list.include?(human2)
+    end
+
+    test 'list all the objects in the keys array' do
+      human2 = Human.create(name: 'Cacho', last_name: 'Castaña')
+      all = Human.all([@human1.id])
+
+      assert_equal 1, all.size
+      assert all.include?(@human1)
+      deny all.include?(human2)
     end
   end
 

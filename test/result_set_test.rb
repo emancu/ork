@@ -31,6 +31,7 @@ Protest.describe 'ResultSet' do
 
     test 'it has the keys set but not the loaded objects' do
       key1, key2 = Post.bucket.keys
+
       assert @all.instance_variable_get(:@keys).include? key1
       assert @all.instance_variable_get(:@keys).include? key2
       assert_equal nil, @all.instance_variable_get(:@all)
@@ -44,6 +45,13 @@ Protest.describe 'ResultSet' do
       assert_equal 2, @all.size
       assert @all.include? @post1
       assert @all.include? @post2
+    end
+
+    test 'it returns all the listed objects in a keys array' do
+      @all = Post.all([@post1.id])
+
+      assert_equal 1, @all.size
+      assert @all.include? @post1
     end
   end
 

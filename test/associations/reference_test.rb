@@ -26,10 +26,17 @@ Protest.describe 'reference' do
   end
 
   should 'raise an exception assigning an object of the wrong type' do
-    pending 'Not sure to support this'
-    assert_raise(Error) do
+    assert_raise(Ork::InvalidClass) do
       Comment.new post: 'Not a post'
     end
+  end
+
+  test 'defines the attribute post_id' do
+    comment = Comment.new
+
+    assert Comment.attributes.include? :post_id
+    assert comment.respond_to?(:post_id)
+    assert comment.respond_to?(:post_id=)
   end
 
   should 'return the object referenced' do

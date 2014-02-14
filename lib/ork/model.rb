@@ -34,15 +34,7 @@ module Ork
     #
     def update_embedded_attributes(atts)
       atts.each do |att, val|
-        if val.is_a? Array
-          val.each do |object_atts|
-            model = Ork::Utils.const(self.class, object_atts.delete('_type'))
-            send(:"add_#{att}", model.new(object_atts))
-          end
-        else
-          model = Ork::Utils.const(self.class, val.delete('_type'))
-          send(:"#{att}=", model.new(val))
-        end
+        @embedding[att] = val
       end
     end
 
@@ -68,6 +60,13 @@ module Ork
 
     def model
       self.class
+    end
+
+    def new_embedded(model, attributes)
+      attributes[model.__parent_key] = self
+      attributes.delete '_type'
+
+      model.new attributes
     end
   end
 end
