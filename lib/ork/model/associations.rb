@@ -38,20 +38,18 @@ module Ork::Model
       reader = :"#{name}_id"
       writer = :"#{name}_id="
 
+      attribute reader, accessors: :reader
       index reader
-
-      define_method(reader) do
-        @attributes[reader]
-      end
 
       define_method(writer) do |value|
         @_memo.delete(name)
         @attributes[reader] = value
       end
 
-      define_method(:"#{name}=") do |value|
-        send(writer, value ? value.id : nil)
-        @_memo[name] = value
+      define_method(:"#{name}=") do |object|
+        raise Ork::InvalidClass.new(object) if object.class.name != model.to_s
+        send(writer, object ? object.id : nil)
+        @_memo[name] = object
       end
 
       define_method(name) do
@@ -117,19 +115,42 @@ module Ork::Model
     #   class User
     #     include Ork::Document
     #
+    #     attribute posts_ids
+    #
     #     def posts
-    #       Post.find(:user_id => self.id)
+    #       Post.all(self.posts_ids)
+    #     end
+    #
+    #     def posts_add(post)
+    #       self.posts_ids << post.id
     #     end
     #   end
     #
     def collection(name, model, reference = to_reference)
-      define_method name do
+      reader = :"#{name}_ids"
+
+      attribute reader, accessors: :reader
+
+      define_method(:"#{name}_ids=") do |value|
+        @_memo.delete(name)
+        @attributes[reader] = value
+      end
+
+      define_method(name) do
         return [] if self.id.nil?
         @_memo[name] ||= begin
                            model = Ork::Utils.const(self.class, model)
-                           model.find(:"#{reference}_id", self.id)
+                           model.all(@attributes[reader].to_a)
                          end
       end
+
+      define_method(:"#{name}_add") do |object|
+        raise Ork::InvalidClass.new(object) if object.class.name != model.to_s
+
+        @attributes[reader] = Array(@attributes[reader]) << object.id
+        @_memo[name] << object unless @_memo[name].nil?
+      end
+
     end
 
     # A macro for defining an attribute, and the accessors
