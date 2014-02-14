@@ -16,12 +16,12 @@ module Ork
     # Find all documents in the Document's bucket and return them.
     #   @return Ork::ResultSet<Document> all the documents in the bucket
     #
-    # @Note: This operation is incredibly expensive and should not
+    # @Note: This operation can be incredibly expensive and should not
     #   be used in production applications.
     #
-    def self.all(model)
+    def self.all(model, keys = nil)
       new(model, nil, nil).tap do |r|
-        r.instance_variable_set(:@keys, model.bucket.keys)
+        r.instance_variable_set(:@keys, keys || model.bucket.keys)
       end
     end
 

@@ -21,14 +21,16 @@ module Ork::Model
     end
     alias :exists? :exist?
 
-    # Find all documents in the Document's bucket and return them.
+    # Find all documents of specified keys and return them
+    #
+    # When nil, find all documents in the Document's bucket and return them.
     #   @return Ork::ResultSet<Document> all found documents in the bucket
     #
-    # @Note: This operation is incredibly expensive and should not
+    # @Note: This operation can be incredibly expensive and should not
     #   be used in production applications.
     #
-    def all
-      Ork::ResultSet.all(self)
+    def all(keys = nil)
+      Ork::ResultSet.all(self, keys)
     end
     alias :list :all
 
