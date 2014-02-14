@@ -42,11 +42,11 @@ Take a look at the example below:
 class Post
   include Ork::Document
 
-  attribute :name
-  attribute :age, default: 18
+  attribute :title
+  attribute :rating, default: 4
 
-  index :age
-  unique :name
+  index :rating
+  unique :title
 end
 
 class Comment
@@ -64,11 +64,11 @@ It also gives you some helpful **class methods**:
 |:-------------|:-------------------------------------------------|:-------------------------|
 | bucket       | `Riak::Bucket` The bucket assigned to this class | `#<Riak::Bucket {post}>` |
 | bucket_name  | `String` The bucket name                         | `"post"`                 |
-| attributes   | `Array` Attributes declared                      | `[:name, :age]`          |
-| indices      | `Array` Indices declared                         | `[:age]`                 |
-| uniques      | `Array` Unique indices declared                  | `[:name]`                |
+| attributes   | `Array` Attributes declared                      | `[:title, :rating]`      |
+| indices      | `Array` Indices declared                         | `[:rating]`              |
+| uniques      | `Array` Unique indices declared                  | `[:title]`               |
 | embedding    | `Array` Embedded attributes declared             | `[:post]`                |
-| defaults     | `Hash` Defaults for attributes                   | `{:age=>18}`             |
+| defaults     | `Hash` Defaults for attributes                   | `{:rating=>4}`           |
 
 
 And for **instance methods** it defines:
@@ -98,7 +98,7 @@ Core behaviour of `Ork::Model`.
 An `attribute` is just any value that can be stored. It is composed of a `:name` and an optional `hash`.
 
 ```ruby
-attribute :age, default: 18
+attribute :rating, default: 4
 ```
 
 #### Options
@@ -122,6 +122,7 @@ containing the foreign key to another model.
 reference :user, :User
 ```
 
+
 ## referenced
 
 Provides an accessor to search for _one_ model that `reference` the current model.
@@ -130,13 +131,22 @@ Provides an accessor to search for _one_ model that `reference` the current mode
 referenced :comment, :Comment
 ```
 
+
 ## collection
 
-Provides an accessor to search for _all_ models that `reference` the current model.
+It's a special kind of attribute that references another models.
+Internally, Ork will keep a an array of ids to the models, but you get
+accessors that give you real instances.
+
+It won't make a query to retrieve _all_ models taht `reference` the current model.
+This is something that works well on _relational databases_ but is not recomended
+for _document oriented databases_ like **Riak**.
+
 
 ```ruby
 collection :comments, :Comment
 ```
+
 
 ## embed
 > Only accepts embeddable objects.
@@ -148,6 +158,7 @@ accessors that give you real instances.
 ```ruby
 embed :comment, :Comment
 ```
+
 
 ## embed_collection
 > Only accepts embeddable objects.
@@ -173,6 +184,24 @@ Provides an accessor to the object that `embeds` the current model.
 ```ruby
 embedded :post, :Post
 ```
+
+
+## index
+
+Create an index for the previously defined `attribute`.
+
+```ruby
+index :rating
+```
+
+## unique
+
+Create a unique index for the previously defined `attribute`.
+
+```ruby
+unique :title
+```
+
 
 ## Pagination
 
