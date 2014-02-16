@@ -248,11 +248,23 @@ module Ork::Model
       end
 
       define_method(:"#{name}_add") do |object|
-        raise Ork::NotEmbeddable.new(object) unless object.embeddable?
+        unless object.respond_to?(:embeddable?) && object.embeddable?
+          raise Ork::NotEmbeddable.new(object)
+        end
 
         object.__parent = self
         @_memo[name] << object if @_memo[name]
         @embedding[name] = Array(@embedding[name]) << object.attributes
+      end
+
+      define_method(:"#{name}_remove") do |object|
+        unless object.respond_to?(:embeddable?) && object.embeddable?
+          raise Ork::NotEmbeddable.new(object)
+        end
+
+        object.__parent = nil
+        @_memo[name].delete(object) if @_memo[name]
+        @embedding[name].delete(object.attributes) and object if @embedding[name]
       end
     end
 
