@@ -46,7 +46,7 @@ Protest.describe 'collection' do
   end
 
   test 'raise an exception assigning an object of the wrong type' do
-    assert_raise(Ork::NotOrkDocument) do
+    assert_raise(Ork::NotOrkObject) do
       Post.new.comments_add 'Not a comment'
     end
   end
@@ -125,7 +125,7 @@ Protest.describe 'collection' do
     end
 
     test 'raise an exception removing an object of the wrong type' do
-      assert_raise(Ork::NotOrkDocument) do
+      assert_raise(Ork::NotOrkObject) do
         Post.new.comments_remove 'Not a comment'
       end
     end

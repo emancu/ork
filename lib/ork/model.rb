@@ -68,5 +68,16 @@ module Ork
 
       model.new attributes
     end
+
+    def assert_valid_class(object, model)
+      raise Ork::NotOrkObject.new(object) unless object.class.include? Ork::Document
+      raise Ork::InvalidClass.new(object) if object.class.name != model.to_s
+    end
+
+    def assert_embeddable(object)
+      unless object.respond_to?(:embeddable?) && object.embeddable?
+        raise Ork::NotEmbeddable.new(object)
+      end
+    end
   end
 end

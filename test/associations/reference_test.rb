@@ -26,7 +26,7 @@ Protest.describe 'reference' do
   end
 
   should 'raise an exception assigning an object of the wrong type' do
-    assert_raise(Ork::NotOrkDocument) do
+    assert_raise(Ork::NotOrkObject) do
       Comment.new post: 'Not a post'
     end
   end
