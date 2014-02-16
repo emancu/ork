@@ -4,10 +4,10 @@ module Ork
   class UniqueIndexViolation < RuntimeError; end
 
   # Document
-  class InvalidClass < RuntimeError; end
+  class NotOrkDocument < StandardError; end
 
   # Embedded
-  class NotAnEmbeddableObject < RuntimeError; end
+  class NotEmbeddable < StandardError; end
   class ParentMissing < RuntimeError; end
 
 

@@ -47,7 +47,7 @@ module Ork::Model
       end
 
       define_method(:"#{name}=") do |object|
-        raise Ork::InvalidClass.new(object) if object.class.name != model.to_s
+        raise Ork::NotOrkDocument.new(object) if object.class.name != model.to_s
         send(writer, object ? object.id : nil)
         @_memo[name] = object
       end
@@ -145,7 +145,7 @@ module Ork::Model
       end
 
       define_method(:"#{name}_add") do |object|
-        raise Ork::InvalidClass.new(object) if object.class.name != model.to_s
+        raise Ork::NotOrkDocument.new(object) if object.class.name != model.to_s
 
         @attributes[reader] = Array(@attributes[reader]) << object.id
         @_memo[name] << object unless @_memo[name].nil?
@@ -192,7 +192,7 @@ module Ork::Model
 
       define_method(:"#{name}=") do |object|
         unless object.respond_to?(:embeddable?) && object.embeddable?
-          raise Ork::NotAnEmbeddableObject.new(object)
+          raise Ork::NotEmbeddable.new(object)
         end
 
         @embedding[name] = object.attributes
@@ -242,7 +242,7 @@ module Ork::Model
       end
 
       define_method(:"#{name}_add") do |object|
-        raise Ork::NotAnEmbeddableObject.new(object) unless object.embeddable?
+        raise Ork::NotEmbeddable.new(object) unless object.embeddable?
 
         object.__parent = self
         @_memo[name] << object unless @_memo[name].nil?

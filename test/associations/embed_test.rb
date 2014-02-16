@@ -26,7 +26,7 @@ Protest.describe 'embed' do
   end
 
   should 'raise an exception when embeds an object that is not embeddable' do
-    assert_raise(Ork::NotAnEmbeddableObject) do
+    assert_raise(Ork::NotEmbeddable) do
       Note.new.annotation = Note.new
     end
   end
