@@ -3,11 +3,13 @@ module Ork
   class IndexNotFound < RuntimeError; end
   class UniqueIndexViolation < RuntimeError; end
 
+  class NotOrkObject < StandardError; end
+
   # Document
   class InvalidClass < RuntimeError; end
 
   # Embedded
-  class NotAnEmbeddableObject < RuntimeError; end
+  class NotEmbeddable < StandardError; end
   class ParentMissing < RuntimeError; end
 
 

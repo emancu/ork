@@ -47,7 +47,8 @@ module Ork::Model
       end
 
       define_method(:"#{name}=") do |object|
-        raise Ork::InvalidClass.new(object) if object.class.name != model.to_s
+        assert_valid_class object, model
+
         send(writer, object ? object.id : nil)
         @_memo[name] = object
       end
@@ -145,12 +146,18 @@ module Ork::Model
       end
 
       define_method(:"#{name}_add") do |object|
-        raise Ork::InvalidClass.new(object) if object.class.name != model.to_s
+        assert_valid_class object, model
 
         @attributes[reader] = Array(@attributes[reader]) << object.id
-        @_memo[name] << object unless @_memo[name].nil?
+        @_memo[name] << object if @_memo[name]
       end
 
+      define_method(:"#{name}_remove") do |object|
+        assert_valid_class object, model
+
+        @_memo[name].delete(object) if @_memo[name]
+        @attributes[reader].delete(object.id) and object if @attributes[reader]
+      end
     end
 
     # A macro for defining an attribute, and the accessors
@@ -191,9 +198,7 @@ module Ork::Model
       end
 
       define_method(:"#{name}=") do |object|
-        unless object.respond_to?(:embeddable?) && object.embeddable?
-          raise Ork::NotAnEmbeddableObject.new(object)
-        end
+        assert_embeddable object
 
         @embedding[name] = object.attributes
         object.__parent = self
@@ -242,11 +247,19 @@ module Ork::Model
       end
 
       define_method(:"#{name}_add") do |object|
-        raise Ork::NotAnEmbeddableObject.new(object) unless object.embeddable?
+        assert_embeddable object
 
         object.__parent = self
-        @_memo[name] << object unless @_memo[name].nil?
+        @_memo[name] << object if @_memo[name]
         @embedding[name] = Array(@embedding[name]) << object.attributes
+      end
+
+      define_method(:"#{name}_remove") do |object|
+        assert_embeddable object
+
+        object.__parent = nil
+        @_memo[name].delete(object) if @_memo[name]
+        @embedding[name].delete(object.attributes) and object if @embedding[name]
       end
     end
 
