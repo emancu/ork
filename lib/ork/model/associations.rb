@@ -148,9 +148,15 @@ module Ork::Model
         raise Ork::NotOrkDocument.new(object) if object.class.name != model.to_s
 
         @attributes[reader] = Array(@attributes[reader]) << object.id
-        @_memo[name] << object unless @_memo[name].nil?
+        @_memo[name] << object if @_memo[name]
       end
 
+      define_method(:"#{name}_remove") do |object|
+        raise Ork::NotOrkDocument.new(object) if object.class.name != model.to_s
+
+        @_memo[name].delete(object) if @_memo[name]
+        @attributes[reader].delete(object.id) and object if @attributes[reader]
+      end
     end
 
     # A macro for defining an attribute, and the accessors
@@ -245,7 +251,7 @@ module Ork::Model
         raise Ork::NotEmbeddable.new(object) unless object.embeddable?
 
         object.__parent = self
-        @_memo[name] << object unless @_memo[name].nil?
+        @_memo[name] << object if @_memo[name]
         @embedding[name] = Array(@embedding[name]) << object.attributes
       end
     end

@@ -40,6 +40,7 @@ Protest.describe 'collection' do
     post = Post.new
 
     assert post.respond_to?(:comments_add)
+    assert post.respond_to?(:comments_remove)
     assert post.respond_to?(:comments)
     deny   post.respond_to?(:comments=)
   end
@@ -115,6 +116,34 @@ Protest.describe 'collection' do
     deny   post.comments.empty?
     assert post.comments.include?(comment1)
     deny   post.comments.include?(comment2)
+  end
+
+  context 'remove an item of the collection' do
+    setup do
+      @comment1 = Comment.create text: 'A comment'
+      @post = Post.create name: 'Remove items', comments_ids: [@comment1.id]
+    end
+
+    test 'raise an exception removing an object of the wrong type' do
+      assert_raise(Ork::NotOrkDocument) do
+        Post.new.comments_add 'Not a comment'
+      end
+    end
+
+    it 'removes the object and the id' do
+      @post.comments_remove @comment1
+
+      assert @post.comments.empty?
+      assert @post.comments_ids.empty?
+    end
+
+    it 'return the object removed' do
+      assert_equal @comment1, @post.comments_remove(@comment1)
+    end
+
+    it 'return nil if the object is not present' do
+      assert_equal nil, @post.comments_remove(Comment.create)
+    end
   end
 end
 
