@@ -264,6 +264,9 @@ If you don't know them, you should take a look, but remember that you are free t
 
 Just remember to check if an object is _valid_ __before__ you _save_ it.
 
+# Ork vs Ripple
+
+![Ork_vs_ripple](http://f.cl.ly/items/2L2F090T3C0i0H1C2C1P/Image%202014-04-23%20at%203.52.56%20PM.png)
 
 # Tools
 
