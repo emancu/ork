@@ -14,7 +14,7 @@ module Ork::Model
     # It's best to normalize or encode any
     # user-supplied data before using it as an index
     def value_from(attributes)
-      Set[attributes[@name]]
+      attributes[@name].respond_to?(:map) ? Set.new(attributes[@name]) : Set[attributes[@name]]
     end
   end
 end
