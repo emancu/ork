@@ -5,9 +5,11 @@ class Dog
 
   attribute :name
   attribute :age
+  attribute :tags
 
   index :name
   unique :age
+  index :tags
 end
 
 Protest.describe 'Indices' do
@@ -16,7 +18,7 @@ Protest.describe 'Indices' do
   end
 
   test 'have an indices list' do
-    assert_equal [:name, :age], Dog.indices.keys
+    assert_equal [:name, :age, :tags], Dog.indices.keys
   end
 
   test 'have a uniques list' do
@@ -38,6 +40,13 @@ Protest.describe 'Indices' do
     dog.update(name: 'Athos')
 
     assert_equal Set['Athos'], robject.indexes['name_bin']
+  end
+
+  test 'index enumerable attributes' do
+    dog = Dog.create(name: 'Chono', tags: ['guard', 'large'])
+    robject = dog.send :__robject
+
+    assert_equal Set.new(['guard', 'large']), robject.indexes['tags_bin']
   end
 
   test 'prevent save on UniqueIndexViolation error' do
