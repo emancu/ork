@@ -7,7 +7,7 @@ require 'ork/errors'
 require "riak"
 
 module Ork
-  VERSION = "0.1.4"
+  VERSION = "0.1.5"
 
   def self.conn
     @conn ||= Ork::Connection.new
