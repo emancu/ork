@@ -112,6 +112,14 @@ Protest.describe 'Ork::Model' do
       assert_equal nil, @event.location
     end
 
+    test 'reload object with given quorum' do
+      quorum  = 1
+      robject = @event.send(:__robject)
+      robject.expects(:reload).with(force: true, r: quorum).returns(robject)
+
+      @event.reload(quorum: quorum)
+    end
+
     context 'Deletion' do
       test 'freeze the object' do
         assert !@event.frozen?
@@ -124,6 +132,13 @@ Protest.describe 'Ork::Model' do
         assert Event.bucket.exist?(@event.id)
         @event.delete
         assert !Event.bucket.exist?(@event.id)
+      end
+
+      test 'delete with quorum options' do
+        quorum = 1
+        @event.send(:__robject).expects(:delete).with(rw: quorum)
+
+        @event.delete(quorum: quorum)
       end
 
       test 'return false when something occurs' do
@@ -152,6 +167,23 @@ Protest.describe 'Ork::Model' do
 
         assert_equal 'text/plain', event.send(:__robject).content_type
         Event.content_type 'application/json'
+      end
+
+      test 'persist the object with quorum options' do
+        event = Event.create(name: 'Ruby')
+
+        q = { w: 1, dw: 1 }
+        event.send(:__robject).expects(:store).with(q).once
+        event.save(quorum: q)
+      end
+
+      test 'raises an error with invalid quorum options' do
+        event = Event.create(name: 'Ruby')
+
+        q = { type: 'something' }
+        assert_raise ArgumentError do
+          event.save(quorum: q)
+        end
       end
     end
   end
