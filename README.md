@@ -1,8 +1,8 @@
 # Ork
-[![Gem Version](https://badge.fury.io/rb/ork.png)](http://badge.fury.io/rb/ork)
+[![Gem Version](https://badge.fury.io/rb/ork.svg)](http://badge.fury.io/rb/ork)
 [![Build Status](https://travis-ci.org/emancu/ork.svg)](https://travis-ci.org/emancu/ork)
 [![Code Climate](https://codeclimate.com/github/emancu/ork/badges/gpa.svg)](https://codeclimate.com/github/emancu/ork)
-[![Coverage Status](https://coveralls.io/repos/emancu/ork/badge.png)](https://coveralls.io/r/emancu/ork)
+[![Coverage Status](https://coveralls.io/repos/emancu/ork/badge.svg)](https://coveralls.io/r/emancu/ork)
 [![Dependency Status](https://gemnasium.com/emancu/ork.svg)](https://gemnasium.com/emancu/ork)
 
 Ork is a small Ruby modeling layer for **Riak** database, inspired by [Ohm](http://ohm.keyvalue.org).
