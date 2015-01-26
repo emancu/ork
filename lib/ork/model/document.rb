@@ -69,13 +69,20 @@ module Ork
     #   u = User.new(:name => "John").save
     #   # => #<User:6kS5VHNbaed9h7gFLnVg5lmO4U7 {:name=>"John"}>
     #
-    def save
+    def save(options = {})
+      quorum_types = [:r, :w, :dw]
+      quorum = options.fetch(:quorum, {})
+
+      unless quorum.empty?
+        raise ArgumentError.new("invalid quorum option") unless quorum.keys.select { |key| !quorum_types.include?(key) }.empty?
+      end
+
       __robject.content_type = model.content_type
       __robject.data = __persist_attributes
 
       __check_unique_indices
       __update_indices
-      __robject.store
+      __robject.store(quorum)
 
       @id = __robject.key
 
@@ -83,13 +90,16 @@ module Ork
     end
 
     # Preload all the attributes of this model from Riak.
-    def reload
-      new? ? self : self.load!(@id)
+    def reload(options = {})
+      new? ? self : self.load!(@id, options)
     end
 
     # Delete the model
-    def delete
-      __robject.delete unless new?
+    def delete(options = {})
+      opts = {}
+      opts.merge!(rw: options[:quorum].to_i) if options[:quorum]
+
+      __robject.delete(opts) unless new?
       freeze
     rescue Riak::FailedRequest
       false
@@ -99,9 +109,13 @@ module Ork
 
     # Overwrite attributes with the persisted attributes in Riak.
     #
-    def load!(id)
+    def load!(id, options = {})
+      opts = {}
+      opts.merge!(force: true) if options[:force]
+      opts.merge!(r: options[:quorum].to_i) if options[:quorum]
+      
       self.__robject.key = id
-      __load_robject! id, @__robject.reload(force: true)
+      __load_robject! id, @__robject.reload(opts)
     end
 
     # Transform a RObject returned by Riak into a Ork::Document.

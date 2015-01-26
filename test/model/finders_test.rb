@@ -37,6 +37,17 @@ Protest.describe 'Finders' do
     test 'return nil when the id does not belong to an object of this bucket' do
       assert_equal nil, Human['not_an_id']
     end
+
+    test 'retrieve an object with given quorum' do
+      quorum  = 1
+      robject = Human.bucket.new
+      Human.bucket.stubs(:new).returns(robject)
+      robject.expects(:reload).with(force: true, r: quorum).returns(@human1.send(:__robject))
+
+      Human[@human1.id, quorum: quorum]
+
+      Human.bucket.unstub(:new)
+    end
   end
 
   context '*exist?*' do
@@ -44,6 +55,13 @@ Protest.describe 'Finders' do
       assert !Human.exist?(nil)
       assert !Human.exist?('not_an_id')
       assert Human.exist?(@human1.id)
+    end
+
+    test 'check existence with given quorum' do
+      quorum  = 1
+      Human.bucket.expects(:exists?).once.with(@human1.id, r: quorum).returns(true)
+
+      assert Human.exist?(@human1.id, quorum: quorum)
     end
   end
 

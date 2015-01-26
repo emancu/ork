@@ -11,13 +11,16 @@ module Ork::Model
     #   u == User[u.id]
     #   # => true
     #
-    def [](id)
-      load_key(id) if exist?(id)
+    def [](id, options = {})
+      load_key(id, options) if exist?(id, options)
     end
 
     # Check if the ID exists.
-    def exist?(id)
-      !id.nil? && bucket.exists?(id)
+    def exist?(id, options = {})
+      opts = {}
+      opts.merge!(r: options[:quorum].to_i) if options[:quorum]
+
+      !id.nil? && bucket.exists?(id, opts)
     end
     alias :exists? :exist?
 
@@ -69,8 +72,8 @@ module Ork::Model
 
     private
 
-    def load_key(id)
-      new.send(:load!, id)
+    def load_key(id, options)
+      new.send(:load!, id, options.merge(force: true))
     rescue Riak::FailedRequest => e
       raise e unless e.not_found?
     end
