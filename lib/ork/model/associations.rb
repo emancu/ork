@@ -102,6 +102,39 @@ module Ork::Model
     #   class Post
     #     include Ork::Document
     #
+    #     reference :blog, :Blog
+    #   end
+    #
+    #   class Blog
+    #     include Ork::Document
+    #
+    #     many :posts, :Post
+    #   end
+    #
+    #   # is the same as
+    #
+    #   class Blog
+    #     include Ork::Document
+    #
+    #     def posts
+    #       Post.find(:blog_id => self.id)
+    #     end
+    #   end
+    #
+    def many(name, model, reference = to_reference)
+      define_method name do
+        return [] if self.id.nil?
+        model = Ork::Utils.const(self.class, model)
+        model.find(:"#{reference}_id", self.id)
+      end
+    end
+
+    # A macro for defining a method which basically does a find.
+    #
+    # Example:
+    #   class Post
+    #     include Ork::Document
+    #
     #     reference :user, :User
     #   end
     #
